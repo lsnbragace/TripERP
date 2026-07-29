@@ -3,9 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TripERP H0.3</title>
+
+<title>TripERP H0.4.1</title>
+
+<!-- Leaflet -->
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
 
 <style>
+
 * {
     box-sizing: border-box;
 }
@@ -17,19 +25,27 @@ body {
     color: #1f2937;
 }
 
+/* =========================
+   HEADER
+========================= */
+
 header {
     height: 64px;
     background: #ffffff;
     border-bottom: 1px solid #e5e7eb;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     padding: 0 24px;
+
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 10;
+
+    z-index: 1000;
 }
 
 .logo {
@@ -45,23 +61,39 @@ header {
 .menu-button {
     background: #111827;
     color: white;
+
     border: none;
     padding: 9px 13px;
+
     border-radius: 6px;
+
     cursor: pointer;
 }
 
+/* =========================
+   SIDEBAR
+========================= */
+
 .sidebar {
+
     position: fixed;
+
     top: 64px;
     left: 0;
     bottom: 0;
+
     width: 240px;
+
     background: #111827;
     color: white;
+
     padding: 18px 12px;
+
     transition: 0.25s;
+
     overflow-y: auto;
+
+    z-index: 900;
 }
 
 .sidebar.collapsed {
@@ -69,33 +101,77 @@ header {
 }
 
 .sidebar button {
+
     width: 100%;
+
     border: none;
+
     background: transparent;
+
     color: #d1d5db;
+
     padding: 12px 10px;
+
     margin-bottom: 4px;
+
     text-align: left;
+
     border-radius: 6px;
+
     cursor: pointer;
+
     font-size: 14px;
+
+    transition: 0.2s;
+
 }
 
 .sidebar button:hover,
 .sidebar button.active {
+
     background: #374151;
+
     color: white;
+
 }
 
+/* Menu recolhido */
+
+.sidebar.collapsed button {
+
+    font-size: 0;
+
+    text-align: center;
+
+    padding: 12px 0;
+
+}
+
+.sidebar.collapsed button::first-letter {
+    font-size: 20px;
+}
+
+/* =========================
+   MAIN
+========================= */
+
 .main {
+
     margin-left: 240px;
+
     padding: 92px 28px 40px;
+
     transition: 0.25s;
+
 }
 
 .main.expanded {
     margin-left: 70px;
 }
+
+/* =========================
+   PAGES
+========================= */
 
 .page {
     display: none;
@@ -113,707 +189,2039 @@ h1 {
     color: #6b7280;
 }
 
+/* =========================
+   CARDS
+========================= */
+
 .cards {
+
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(190px, 1fr));
+
     gap: 16px;
+
     margin: 24px 0;
+
 }
 
 .card {
+
     background: white;
+
     border-radius: 12px;
+
     padding: 20px;
+
     border: 1px solid #e5e7eb;
+
 }
 
 .card-title {
+
     color: #6b7280;
+
     font-size: 13px;
+
 }
 
 .card-value {
+
     font-size: 25px;
+
     font-weight: bold;
+
     margin-top: 8px;
+
 }
 
+/* =========================
+   PANELS
+========================= */
+
 .grid {
+
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(300px, 1fr));
+
     gap: 20px;
+
 }
 
 .panel {
+
     background: white;
+
     border: 1px solid #e5e7eb;
+
     border-radius: 12px;
+
     padding: 20px;
+
     margin-bottom: 20px;
+
 }
 
 .panel h2 {
     margin-top: 0;
 }
 
-.timeline-item {
-    padding: 12px;
-    border-left: 3px solid #6b7280;
-    margin-bottom: 12px;
-    background: #f9fafb;
-}
+/* =========================
+   ALERTS
+========================= */
 
 .alert {
+
     padding: 12px;
+
     border-radius: 8px;
+
     margin-bottom: 10px;
+
 }
 
 .alert.warning {
+
     background: #fff7ed;
+
     color: #9a3412;
+
 }
 
 .alert.ok {
+
     background: #f0fdf4;
+
     color: #166534;
+
 }
 
-.check {
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
-}
+/* =========================
+   BUTTONS
+========================= */
 
 button.primary {
+
     background: #2563eb;
+
     color: white;
+
     border: none;
+
     padding: 10px 15px;
+
     border-radius: 6px;
+
     cursor: pointer;
+
 }
 
 button.secondary {
+
     background: #e5e7eb;
+
     color: #111827;
+
     border: none;
+
     padding: 10px 15px;
+
     border-radius: 6px;
+
     cursor: pointer;
+
 }
+
+/* =========================
+   MAPA CENTRAL
+========================= */
+
+.map-layout {
+
+    display: grid;
+
+    grid-template-columns: 260px 1fr;
+
+    gap: 16px;
+
+}
+
+.map-filters {
+
+    background: white;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 12px;
+
+    padding: 18px;
+
+}
+
+.map-filters h3 {
+    margin-top: 0;
+}
+
+.filter-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin: 12px 0;
+
+}
+
+.filter-item input {
+
+    width: auto;
+
+}
+
+#map {
+
+    height: 620px;
+
+    width: 100%;
+
+    border-radius: 12px;
+
+    border: 1px solid #d1d5db;
+
+}
+
+.map-info {
+
+    background: white;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 12px;
+
+    padding: 16px;
+
+    margin-top: 16px;
+
+}
+
+/* =========================
+   TIMELINE
+========================= */
+
+.timeline-item {
+
+    padding: 12px;
+
+    border-left: 3px solid #6b7280;
+
+    margin-bottom: 12px;
+
+    background: #f9fafb;
+
+}
+
+/* =========================
+   CHECKLIST
+========================= */
+
+.check {
+
+    padding: 10px 0;
+
+    border-bottom: 1px solid #eee;
+
+}
+
+.check input {
+
+    width: auto;
+
+}
+
+/* =========================
+   FORM
+========================= */
 
 input,
 textarea,
 select {
+
     width: 100%;
+
     padding: 10px;
+
     border: 1px solid #d1d5db;
+
     border-radius: 6px;
+
     margin: 6px 0 14px;
+
 }
 
-.editable {
-    border-bottom: 1px dashed #9ca3af;
-}
-
-.edit-mode .editable {
-    background: #fff7cc;
-    cursor: text;
-}
+/* =========================
+   DEMO
+========================= */
 
 .demo-box {
+
     background: #eff6ff;
+
     border: 1px solid #bfdbfe;
+
     padding: 15px;
+
     border-radius: 10px;
+
     margin-bottom: 20px;
+
 }
 
+/* =========================
+   FOOTER
+========================= */
+
 footer {
+
     margin-top: 40px;
+
     color: #9ca3af;
+
     font-size: 12px;
+
     text-align: center;
+
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 800px) {
+
+    .map-layout {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    #map {
+
+        height: 500px;
+
+    }
+
 }
 
 @media (max-width: 700px) {
+
     .sidebar {
+
         width: 70px;
+
     }
 
     .sidebar button {
-        font-size: 0;
-        text-align: center;
-    }
 
-    .sidebar button:first-letter {
-        font-size: 18px;
+        font-size: 0;
+
+        text-align: center;
+
     }
 
     .main {
+
         margin-left: 70px;
+
         padding: 82px 15px 30px;
+
     }
 
     .tagline {
+
         display: none;
+
     }
+
 }
+
 </style>
+
 </head>
+
 
 <body>
 
-<header>
-    <div>
-        <div class="logo">✈️ TripERP H0.3</div>
-        <div class="tagline">Organização, inteligência e tranquilidade para cada viagem.</div>
-    </div>
 
-    <button class="menu-button" onclick="toggleSidebar()">☰</button>
+<!-- =========================
+     HEADER
+========================= -->
+
+<header>
+
+<div>
+
+<div class="logo">
+✈️ TripERP H0.4.1
+</div>
+
+<div class="tagline">
+Organização, inteligência e tranquilidade para cada viagem.
+</div>
+
+</div>
+
+
+<button
+class="menu-button"
+onclick="toggleSidebar()">
+
+☰
+
+</button>
+
 </header>
 
-<aside class="sidebar" id="sidebar">
 
-    <button class="active" onclick="showPage('dashboard', this)">🏠 Dashboard</button>
 
-    <button onclick="showPage('viagem', this)">✈️ Minha Viagem</button>
+<!-- =========================
+     SIDEBAR
+========================= -->
 
-    <button onclick="showPage('itinerario', this)">🗺️ Itinerário</button>
+<aside
+class="sidebar"
+id="sidebar">
 
-    <button onclick="showPage('orcamento', this)">💰 Orçamento</button>
 
-    <button onclick="showPage('checklist', this)">📋 Checklist</button>
+<button
+class="active"
+onclick="showPage('dashboard', this)"
+title="Dashboard">
 
-    <button onclick="showPage('documentos', this)">📄 Documentos</button>
+🏠 Dashboard
 
-    <button onclick="showPage('lugares', this)">📍 Lugares</button>
+</button>
 
-    <button onclick="showPage('insight', this)">🤖 Insight</button>
 
-    <button onclick="showPage('config', this)">⚙️ Configurações</button>
+<button
+onclick="showPage('mapa', this)"
+title="Mapa Central">
+
+🗺️ Mapa Central
+
+</button>
+
+
+<button
+onclick="showPage('viagem', this)"
+title="Minha Viagem">
+
+✈️ Minha Viagem
+
+</button>
+
+
+<button
+onclick="showPage('itinerario', this)"
+title="Itinerário">
+
+🗓️ Itinerário
+
+</button>
+
+
+<button
+onclick="showPage('orcamento', this)"
+title="Orçamento">
+
+💰 Orçamento
+
+</button>
+
+
+<button
+onclick="showPage('checklist', this)"
+title="Checklist">
+
+📋 Checklist
+
+</button>
+
+
+<button
+onclick="showPage('documentos', this)"
+title="Documentos">
+
+📄 Documentos
+
+</button>
+
+
+<button
+onclick="showPage('lugares', this)"
+title="Lugares">
+
+📍 Lugares
+
+</button>
+
+
+<button
+onclick="showPage('insight', this)"
+title="TripERP Insight">
+
+🤖 Insight
+
+</button>
+
+
+<button
+onclick="showPage('config', this)"
+title="Configurações">
+
+⚙️ Configurações
+
+</button>
+
 
 </aside>
 
-<main class="main" id="main">
 
-<!-- DASHBOARD -->
 
-<section id="dashboard" class="page active">
+<!-- =========================
+     MAIN
+========================= -->
 
-    <div class="demo-box">
-        <strong>🧪 Modo Demonstração ativo</strong>
-        <p>
-            Você está visualizando uma viagem fictícia para conhecer
-            as funcionalidades do TripERP H0.3.
-        </p>
-    </div>
+<main
+class="main"
+id="main">
 
-    <h1 class="editable">Dashboard da Viagem</h1>
 
-    <p class="subtitle editable">
-        Visão geral do planejamento da sua próxima viagem.
-    </p>
 
-    <div class="cards">
+<!-- =========================
+     DASHBOARD
+========================= -->
 
-        <div class="card">
-            <div class="card-title">Destino</div>
-            <div class="card-value">Eurásia 2027</div>
-        </div>
+<section
+id="dashboard"
+class="page active">
 
-        <div class="card">
-            <div class="card-title">Duração</div>
-            <div class="card-value">30 dias</div>
-        </div>
 
-        <div class="card">
-            <div class="card-title">Países</div>
-            <div class="card-value">5</div>
-        </div>
+<div class="demo-box">
 
-        <div class="card">
-            <div class="card-title">Orçamento</div>
-            <div class="card-value">R$ 35.000</div>
-        </div>
+<strong>
+🧪 Modo Demonstração ativo
+</strong>
 
-    </div>
+<p>
 
-    <div class="grid">
+Esta versão apresenta a evolução
+do TripERP para a H0.4.1.
 
-        <div class="panel">
+O Mapa Central passa a ser
+o núcleo geográfico da viagem.
 
-            <h2>🗓️ Próximas etapas</h2>
+</p>
 
-            <div class="timeline-item">
-                <strong>Definir roteiro final</strong>
-                <br>
-                Próxima etapa do planejamento
-            </div>
+</div>
 
-            <div class="timeline-item">
-                <strong>Reservar hospedagens</strong>
-                <br>
-                4 reservas pendentes
-            </div>
 
-            <div class="timeline-item">
-                <strong>Contratar seguro viagem</strong>
-                <br>
-                Ainda não cadastrado
-            </div>
+<h1>
+Dashboard da Viagem
+</h1>
 
-        </div>
 
-        <div class="panel">
+<p class="subtitle">
 
-            <h2>🤖 TripERP Insight</h2>
+Visão geral do planejamento
+da sua próxima viagem.
 
-            <div class="alert warning">
-                ⚠ Seguro viagem ainda não cadastrado.
-            </div>
+</p>
 
-            <div class="alert warning">
-                ⚠ Existem hospedagens pendentes.
-            </div>
 
-            <div class="alert ok">
-                ✔ Orçamento dentro do planejado.
-            </div>
+<div class="cards">
 
-            <button class="primary" onclick="showPage('insight')">
-                Ver análise completa
-            </button>
 
-        </div>
+<div class="card">
 
-    </div>
+<div class="card-title">
+Destino
+</div>
+
+<div class="card-value">
+Eurásia 2027
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-title">
+Duração
+</div>
+
+<div class="card-value">
+30 dias
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-title">
+Países
+</div>
+
+<div class="card-value">
+5
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-title">
+Orçamento
+</div>
+
+<div class="card-value">
+R$ 35.000
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="grid">
+
+
+<div class="panel">
+
+<h2>
+🗺️ Mapa Central
+</h2>
+
+<p>
+
+A rota da viagem reúne
+origem, aeroportos, cidades,
+hotéis e pontos de interesse.
+
+</p>
+
+<button
+class="primary"
+onclick="showPage('mapa')">
+
+Abrir Mapa Central
+
+</button>
+
+</div>
+
+
+<div class="panel">
+
+<h2>
+🤖 TripERP Insight
+</h2>
+
+
+<div class="alert warning">
+
+⚠ Seguro viagem ainda
+não cadastrado.
+
+</div>
+
+
+<div class="alert warning">
+
+⚠ Existem hospedagens
+pendentes.
+
+</div>
+
+
+<div class="alert ok">
+
+✔ Orçamento dentro
+do planejado.
+
+</div>
+
+
+</div>
+
+
+</div>
+
 
 </section>
 
 
-<!-- VIAGEM -->
 
-<section id="viagem" class="page">
+<!-- =========================
+     MAPA CENTRAL
+========================= -->
 
-    <h1>✈️ Minha Viagem</h1>
+<section
+id="mapa"
+class="page">
 
-    <div class="panel">
 
-        <h2 class="editable">Eurásia 2027</h2>
+<h1>
+🗺️ Mapa Central da Viagem
+</h1>
 
-        <label>Objetivo da viagem</label>
 
-        <textarea class="editable">
-Viagem de 30 dias combinando Geórgia, Armênia e Ásia Central.
-        </textarea>
+<p class="subtitle">
 
-        <div class="grid">
+Visão geográfica integrada da viagem.
 
-            <div>
-                <label>Data de início</label>
-                <input type="date" value="2027-04-10">
-            </div>
+</p>
 
-            <div>
-                <label>Data de retorno</label>
-                <input type="date" value="2027-05-09">
-            </div>
 
-        </div>
+<div class="map-layout">
 
-        <button class="primary" onclick="saveData()">
-            💾 Salvar informações
-        </button>
 
-    </div>
+<div class="map-filters">
+
+
+<h3>
+Filtros do mapa
+</h3>
+
+
+<label class="filter-item">
+
+<input
+type="checkbox"
+checked
+onchange="toggleLayer('cities')">
+
+📍 Cidades
+
+</label>
+
+
+<label class="filter-item">
+
+<input
+type="checkbox"
+checked
+onchange="toggleLayer('airports')">
+
+✈️ Aeroportos
+
+</label>
+
+
+<label class="filter-item">
+
+<input
+type="checkbox"
+checked
+onchange="toggleLayer('hotels')">
+
+🏨 Hotéis
+
+</label>
+
+
+<label class="filter-item">
+
+<input
+type="checkbox"
+checked
+onchange="toggleLayer('poi')">
+
+⭐ Pontos de interesse
+
+</label>
+
+
+<label class="filter-item">
+
+<input
+type="checkbox"
+checked
+onchange="toggleLayer('transport')">
+
+🚆 Transportes
+
+</label>
+
+
+<label class="filter-item">
+
+<input
+type="checkbox"
+checked
+onchange="toggleLayer('route')">
+
+🛣️ Rota da viagem
+
+</label>
+
+
+<hr>
+
+
+<h3>
+Legenda
+</h3>
+
+
+<p>
+📍 Cidade
+</p>
+
+<p>
+✈️ Aeroporto
+</p>
+
+<p>
+🏨 Hotel
+</p>
+
+<p>
+⭐ Interesse
+</p>
+
+<p>
+🚆 Transporte
+</p>
+
+
+</div>
+
+
+<div>
+
+<div id="map"></div>
+
+
+<div class="map-info">
+
+<h3>
+📍 Informações do ponto selecionado
+</h3>
+
+<p id="map-info-text">
+
+Clique em um ponto do mapa
+para visualizar informações.
+
+</p>
+
+</div>
+
+</div>
+
+
+</div>
+
 
 </section>
 
 
-<!-- ITINERÁRIO -->
 
-<section id="itinerario" class="page">
+<!-- =========================
+     VIAGEM
+========================= -->
 
-    <h1>🗺️ Itinerário</h1>
+<section
+id="viagem"
+class="page">
 
-    <p class="subtitle">
-        Planejamento diário da viagem.
-    </p>
 
-    <div class="panel">
+<h1>
+✈️ Minha Viagem
+</h1>
 
-        <h2>Dia 01 — São Paulo → Europa</h2>
 
-        <div class="timeline-item">
-            ✈️ Voo internacional
-        </div>
+<div class="panel">
 
-        <div class="timeline-item">
-            🏨 Check-in no hotel
-        </div>
 
-    </div>
+<h2>
+Eurásia 2027
+</h2>
 
-    <div class="panel">
 
-        <h2>Dia 02 — Chegada ao destino</h2>
+<label>
+Objetivo da viagem
+</label>
 
-        <div class="timeline-item">
-            📍 Explorar centro histórico
-        </div>
 
-        <div class="timeline-item">
-            🍽️ Jantar
-        </div>
+<textarea>
 
-    </div>
+Viagem de 30 dias combinando
+Geórgia, Armênia e Ásia Central.
 
-    <button class="primary" onclick="alert('Na próxima versão será possível adicionar novos dias.')">
-        + Adicionar dia
-    </button>
+</textarea>
+
+
+<div class="grid">
+
+
+<div>
+
+<label>
+Data de início
+</label>
+
+<input
+type="date"
+value="2027-04-10">
+
+</div>
+
+
+<div>
+
+<label>
+Data de retorno
+</label>
+
+<input
+type="date"
+value="2027-05-09">
+
+</div>
+
+
+</div>
+
+
+<button
+class="primary"
+onclick="saveData()">
+
+💾 Salvar informações
+
+</button>
+
+
+</div>
+
 
 </section>
 
 
-<!-- ORÇAMENTO -->
 
-<section id="orcamento" class="page">
+<!-- =========================
+     ITINERÁRIO
+========================= -->
 
-    <h1>💰 Orçamento</h1>
+<section
+id="itinerario"
+class="page">
 
-    <div class="cards">
 
-        <div class="card">
-            <div class="card-title">Orçamento previsto</div>
-            <div class="card-value">R$ 35.000</div>
-        </div>
+<h1>
+🗓️ Itinerário
+</h1>
 
-        <div class="card">
-            <div class="card-title">Gasto estimado</div>
-            <div class="card-value">R$ 28.500</div>
-        </div>
 
-        <div class="card">
-            <div class="card-title">Reserva</div>
-            <div class="card-value">R$ 6.500</div>
-        </div>
+<p class="subtitle">
 
-    </div>
+Planejamento diário conectado
+à rota da viagem.
 
-    <div class="panel">
+</p>
 
-        <h2>Distribuição prevista</h2>
 
-        <p>✈️ Transporte — R$ 10.000</p>
+<div class="panel">
 
-        <p>🏨 Hospedagem — R$ 9.000</p>
 
-        <p>🍽️ Alimentação — R$ 5.000</p>
+<h2>
+Dia 01 — São Paulo → Europa
+</h2>
 
-        <p>🎟️ Passeios — R$ 3.000</p>
 
-        <p>🛍️ Compras — R$ 1.500</p>
+<div class="timeline-item">
 
-    </div>
+✈️ Voo internacional
+
+</div>
+
+
+<div class="timeline-item">
+
+🏨 Check-in no hotel
+
+</div>
+
+
+</div>
+
+
+<div class="panel">
+
+
+<h2>
+Dia 02 — Exploração
+</h2>
+
+
+<div class="timeline-item">
+
+📍 Centro histórico
+
+</div>
+
+
+<div class="timeline-item">
+
+🍽️ Jantar
+
+</div>
+
+
+</div>
+
+
+<button
+class="primary"
+onclick="alert('O itinerário inteligente será desenvolvido na próxima etapa da H0.4.')">
+
+🤖 Sugerir itinerário
+
+</button>
+
 
 </section>
 
 
-<!-- CHECKLIST -->
 
-<section id="checklist" class="page">
+<!-- =========================
+     ORÇAMENTO
+========================= -->
 
-    <h1>📋 Checklist</h1>
+<section
+id="orcamento"
+class="page">
 
-    <div class="panel">
 
-        <div class="check">
-            <input type="checkbox"> Conferir validade do passaporte
-        </div>
+<h1>
+💰 Orçamento
+</h1>
 
-        <div class="check">
-            <input type="checkbox"> Contratar seguro viagem
-        </div>
 
-        <div class="check">
-            <input type="checkbox"> Reservar hotéis
-        </div>
+<div class="cards">
 
-        <div class="check">
-            <input type="checkbox"> Comprar passagens
-        </div>
 
-        <div class="check">
-            <input type="checkbox"> Fazer câmbio
-        </div>
+<div class="card">
 
-        <div class="check">
-            <input type="checkbox"> Preparar documentos
-        </div>
+<div class="card-title">
+Orçamento previsto
+</div>
 
-    </div>
+<div class="card-value">
+R$ 35.000
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-title">
+Gasto estimado
+</div>
+
+<div class="card-value">
+R$ 28.500
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-title">
+Reserva
+</div>
+
+<div class="card-value">
+R$ 6.500
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="panel">
+
+
+<h2>
+Distribuição prevista
+</h2>
+
+
+<p>
+✈️ Transporte — R$ 10.000
+</p>
+
+
+<p>
+🏨 Hospedagem — R$ 9.000
+</p>
+
+
+<p>
+🍽️ Alimentação — R$ 5.000
+</p>
+
+
+<p>
+🎟️ Passeios — R$ 3.000
+</p>
+
+
+<p>
+🛍️ Compras — R$ 1.500
+</p>
+
+
+</div>
+
 
 </section>
 
 
-<!-- DOCUMENTOS -->
 
-<section id="documentos" class="page">
+<!-- =========================
+     CHECKLIST
+========================= -->
 
-    <h1>📄 Documentos</h1>
+<section
+id="checklist"
+class="page">
 
-    <div class="panel">
 
-        <div class="alert ok">
-            ✔ Passaporte cadastrado
-        </div>
+<h1>
+📋 Checklist
+</h1>
 
-        <div class="alert warning">
-            ⚠ Seguro viagem pendente
-        </div>
 
-        <div class="alert warning">
-            ⚠ Reservas de hospedagem incompletas
-        </div>
+<div class="panel">
 
-        <button class="primary">
-            + Adicionar documento
-        </button>
 
-    </div>
+<div class="check">
+
+<input type="checkbox">
+
+Conferir validade do passaporte
+
+</div>
+
+
+<div class="check">
+
+<input type="checkbox">
+
+Contratar seguro viagem
+
+</div>
+
+
+<div class="check">
+
+<input type="checkbox">
+
+Reservar hotéis
+
+</div>
+
+
+<div class="check">
+
+<input type="checkbox">
+
+Comprar passagens
+
+</div>
+
+
+<div class="check">
+
+<input type="checkbox">
+
+Fazer câmbio
+
+</div>
+
+
+<div class="check">
+
+<input type="checkbox">
+
+Preparar documentos
+
+</div>
+
+
+</div>
+
 
 </section>
 
 
-<!-- LUGARES -->
 
-<section id="lugares" class="page">
+<!-- =========================
+     DOCUMENTOS
+========================= -->
 
-    <h1>📍 Lugares</h1>
+<section
+id="documentos"
+class="page">
 
-    <div class="grid">
 
-        <div class="panel">
-            <h2>🏛️ Museu</h2>
-            <p>Lugares históricos e culturais para visitar.</p>
-        </div>
+<h1>
+📄 Documentos
+</h1>
 
-        <div class="panel">
-            <h2>🍽️ Restaurantes</h2>
-            <p>Lista de restaurantes desejados.</p>
-        </div>
 
-        <div class="panel">
-            <h2>🏔️ Natureza</h2>
-            <p>Parques, montanhas e experiências ao ar livre.</p>
-        </div>
+<div class="panel">
 
-    </div>
 
-    <button class="primary">
-        + Adicionar lugar
-    </button>
+<div class="alert ok">
+
+✔ Passaporte cadastrado
+
+</div>
+
+
+<div class="alert warning">
+
+⚠ Seguro viagem pendente
+
+</div>
+
+
+<div class="alert warning">
+
+⚠ Reservas de hospedagem incompletas
+
+</div>
+
+
+<button
+class="primary">
+
++ Adicionar documento
+
+</button>
+
+
+</div>
+
 
 </section>
 
 
-<!-- INSIGHT -->
 
-<section id="insight" class="page">
+<!-- =========================
+     LUGARES
+========================= -->
 
-    <h1>🤖 TripERP Insight</h1>
+<section
+id="lugares"
+class="page">
 
-    <p class="subtitle">
-        Seu assistente de planejamento e análise da viagem.
-    </p>
 
-    <div class="cards">
+<h1>
+📍 Lugares
+</h1>
 
-        <div class="card">
-            <div class="card-title">Planejamento geral</div>
-            <div class="card-value">82%</div>
-        </div>
 
-        <div class="card">
-            <div class="card-title">Documentação</div>
-            <div class="card-value">70%</div>
-        </div>
+<div class="grid">
 
-        <div class="card">
-            <div class="card-title">Orçamento</div>
-            <div class="card-value">90%</div>
-        </div>
 
-        <div class="card">
-            <div class="card-title">Reservas</div>
-            <div class="card-value">65%</div>
-        </div>
+<div class="panel">
 
-    </div>
+<h2>
+🏛️ Cultura
+</h2>
 
-    <div class="panel">
+<p>
+Museus e locais históricos.
+</p>
 
-        <h2>🔎 Análise da viagem</h2>
+</div>
 
-        <div class="alert warning">
-            ⚠ Seguro viagem ainda não cadastrado.
-        </div>
 
-        <div class="alert warning">
-            ⚠ Existem 4 hospedagens pendentes.
-        </div>
+<div class="panel">
 
-        <div class="alert warning">
-            ⚠ O itinerário ainda possui dias sem planejamento detalhado.
-        </div>
+<h2>
+🍽️ Gastronomia
+</h2>
 
-        <div class="alert ok">
-            ✔ O orçamento atual possui margem de segurança.
-        </div>
+<p>
+Restaurantes desejados.
+</p>
 
-    </div>
+</div>
 
-    <div class="panel">
 
-        <h2>💡 Recomendações</h2>
+<div class="panel">
 
-        <p>
-            Priorize a definição das hospedagens antes de avançar
-            para a reserva de passeios.
-        </p>
+<h2>
+🏔️ Natureza
+</h2>
 
-        <p>
-            Cadastre o seguro viagem assim que a rota definitiva
-            estiver confirmada.
-        </p>
+<p>
+Parques e experiências
+ao ar livre.
+</p>
 
-    </div>
+</div>
+
+
+</div>
+
 
 </section>
 
 
-<!-- CONFIGURAÇÕES -->
 
-<section id="config" class="page">
+<!-- =========================
+     INSIGHT
+========================= -->
 
-    <h1>⚙️ Configurações</h1>
+<section
+id="insight"
+class="page">
 
-    <div class="panel">
 
-        <h2>Preferências</h2>
+<h1>
+🤖 TripERP Insight
+</h1>
 
-        <label>Moeda principal</label>
 
-        <select>
-            <option>BRL — Real Brasileiro</option>
-            <option>EUR — Euro</option>
-            <option>USD — Dólar Americano</option>
-        </select>
+<p class="subtitle">
 
-        <label>Idioma</label>
+Seu assistente de planejamento
+e análise da viagem.
 
-        <select>
-            <option>Português</option>
-            <option>English</option>
-            <option>Español</option>
-        </select>
+</p>
 
-    </div>
 
-    <div class="panel">
+<div class="cards">
 
-        <h2>✏️ Modo de edição</h2>
 
-        <p>
-            Ative esta opção para editar diretamente títulos e textos
-            marcados como editáveis.
-        </p>
+<div class="card">
 
-        <button class="secondary" onclick="toggleEditMode()">
-            Ativar / Desativar edição
-        </button>
+<div class="card-title">
+Planejamento geral
+</div>
 
-    </div>
+<div class="card-value">
+82%
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-title">
+Documentação
+</div>
+
+<div class="card-value">
+70%
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-title">
+Orçamento
+</div>
+
+<div class="card-value">
+90%
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-title">
+Reservas
+</div>
+
+<div class="card-value">
+65%
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="panel">
+
+
+<h2>
+🔎 Análise da viagem
+</h2>
+
+
+<div class="alert warning">
+
+⚠ Seguro viagem ainda
+não cadastrado.
+
+</div>
+
+
+<div class="alert warning">
+
+⚠ Existem hospedagens pendentes.
+
+</div>
+
+
+<div class="alert warning">
+
+⚠ Existem dias sem planejamento
+detalhado.
+
+</div>
+
+
+<div class="alert ok">
+
+✔ Orçamento possui margem
+de segurança.
+
+</div>
+
+
+</div>
+
+
+<div class="panel">
+
+
+<h2>
+💡 Próxima evolução
+</h2>
+
+
+<p>
+
+O Insight será integrado ao
+Mapa Central e ao Itinerário
+para sugerir automaticamente
+a melhor organização dos
+dias da viagem.
+
+</p>
+
+
+</div>
+
 
 </section>
+
+
+
+<!-- =========================
+     CONFIGURAÇÕES
+========================= -->
+
+<section
+id="config"
+class="page">
+
+
+<h1>
+⚙️ Configurações
+</h1>
+
+
+<div class="panel">
+
+
+<h2>
+Preferências
+</h2>
+
+
+<label>
+Moeda principal
+</label>
+
+
+<select>
+
+<option>
+BRL — Real Brasileiro
+</option>
+
+<option>
+EUR — Euro
+</option>
+
+<option>
+USD — Dólar Americano
+</option>
+
+</select>
+
+
+<label>
+Idioma
+</label>
+
+
+<select>
+
+<option>
+Português
+</option>
+
+<option>
+English
+</option>
+
+<option>
+Español
+</option>
+
+</select>
+
+
+</div>
+
+
+</section>
+
 
 
 <footer>
 
-    TripERP H0.3 — Homologação Oficial<br>
-    Organização, inteligência e tranquilidade para cada viagem.
+TripERP H0.4.1 — Homologação
+
+<br>
+
+Organização, inteligência e tranquilidade
+para cada viagem.
 
 </footer>
+
 
 </main>
 
 
+
+<!-- =========================
+     LEAFLET
+========================= -->
+
+<script
+src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+
+
 <script>
+
+
+/* =========================
+   SIDEBAR
+========================= */
 
 function toggleSidebar() {
 
-    document.getElementById("sidebar")
-        .classList.toggle("collapsed");
+document
+.getElementById("sidebar")
+.classList
+.toggle("collapsed");
 
-    document.getElementById("main")
-        .classList.toggle("expanded");
+document
+.getElementById("main")
+.classList
+.toggle("expanded");
 
 }
 
+
+/* =========================
+   NAVEGAÇÃO
+========================= */
 
 function showPage(pageId, button) {
 
-    document.querySelectorAll(".page")
-        .forEach(page => page.classList.remove("active"));
 
-    document.getElementById(pageId)
-        .classList.add("active");
+document
+.querySelectorAll(".page")
+.forEach(page =>
+page.classList.remove("active")
+);
 
-    document.querySelectorAll(".sidebar button")
-        .forEach(btn => btn.classList.remove("active"));
 
-    if (button) {
-        button.classList.add("active");
-    }
+document
+.getElementById(pageId)
+.classList.add("active");
 
-    window.scrollTo(0, 0);
+
+document
+.querySelectorAll(".sidebar button")
+.forEach(btn =>
+btn.classList.remove("active")
+);
+
+
+if(button) {
+
+button.classList.add("active");
+
+}
+
+
+window.scrollTo(0, 0);
+
+
+/* Inicializar mapa */
+
+if(pageId === "mapa") {
+
+setTimeout(function() {
+
+if(!mapInitialized) {
+
+initializeMap();
+
+}
+
+else {
+
+map.invalidateSize();
+
+}
+
+}, 200);
+
+}
 
 }
 
 
-function toggleEditMode() {
+/* =========================
+   MAPA
+========================= */
 
-    document.body.classList.toggle("edit-mode");
+let map;
 
-    const editables =
-        document.querySelectorAll(".editable");
+let mapInitialized = false;
 
-    editables.forEach(element => {
 
-        element.contentEditable =
-            document.body.classList.contains("edit-mode");
+const layers = {
 
-    });
+cities: L.layerGroup(),
+
+airports: L.layerGroup(),
+
+hotels: L.layerGroup(),
+
+poi: L.layerGroup(),
+
+transport: L.layerGroup(),
+
+route: L.layerGroup()
+
+};
+
+
+/* =========================
+   DADOS DE DEMONSTRAÇÃO
+========================= */
+
+const locations = {
+
+
+cities: [
+
+{
+name: "São Paulo",
+lat: -23.5505,
+lng: -46.6333,
+type: "Origem",
+description: "Ponto de partida da viagem."
+},
+
+{
+name: "Tbilisi",
+lat: 41.7151,
+lng: 44.8271,
+type: "Cidade",
+description: "Capital da Geórgia."
+},
+
+{
+name: "Yerevan",
+lat: 40.1872,
+lng: 44.5152,
+type: "Cidade",
+description: "Capital da Armênia."
+},
+
+{
+name: "Almaty",
+lat: 43.2389,
+lng: 76.8897,
+type: "Cidade",
+description: "Principal cidade do Cazaquistão."
+}
+
+],
+
+
+airports: [
+
+{
+name: "Aeroporto Internacional de São Paulo",
+lat: -23.4356,
+lng: -46.4731,
+type: "Aeroporto",
+description: "GRU — Aeroporto Internacional de São Paulo."
+},
+
+{
+name: "Aeroporto de Tbilisi",
+lat: 41.6692,
+lng: 44.9547,
+type: "Aeroporto",
+description: "Aeroporto Internacional de Tbilisi."
+},
+
+{
+name: "Aeroporto de Yerevan",
+lat: 40.1473,
+lng: 44.3959,
+type: "Aeroporto",
+description: "Aeroporto Internacional Zvartnots."
+}
+
+],
+
+
+hotels: [
+
+{
+name: "Hotel Demonstração — Tbilisi",
+lat: 41.7100,
+lng: 44.7950,
+type: "Hotel",
+description: "Hospedagem demonstrativa em Tbilisi."
+},
+
+{
+name: "Hotel Demonstração — Yerevan",
+lat: 40.1800,
+lng: 44.5100,
+type: "Hotel",
+description: "Hospedagem demonstrativa em Yerevan."
+},
+
+{
+name: "Hotel Demonstração — Almaty",
+lat: 43.2450,
+lng: 76.9000,
+type: "Hotel",
+description: "Hospedagem demonstrativa em Almaty."
+}
+
+],
+
+
+poi: [
+
+{
+name: "Centro Histórico de Tbilisi",
+lat: 41.6938,
+lng: 44.8015,
+type: "Ponto de Interesse",
+description: "Área histórica e cultural de Tbilisi."
+},
+
+{
+name: "Praça da República — Yerevan",
+lat: 40.1776,
+lng: 44.5126,
+type: "Ponto de Interesse",
+description: "Um dos principais pontos de Yerevan."
+},
+
+{
+name: "Parque Panfilov — Almaty",
+lat: 43.2430,
+lng: 76.9530,
+type: "Ponto de Interesse",
+description: "Parque histórico no centro de Almaty."
+}
+
+],
+
+
+transport: [
+
+{
+name: "Estação Central de Tbilisi",
+lat: 41.7180,
+lng: 44.7990,
+type: "Transporte",
+description: "Ponto de transporte ferroviário."
+},
+
+{
+name: "Estação de Yerevan",
+lat: 40.1730,
+lng: 44.5020,
+type: "Transporte",
+description: "Principal estação ferroviária da capital armênia."
+}
+
+]
+
+};
+
+
+/* =========================
+   ROTA
+========================= */
+
+const routeCoordinates = [
+
+[-23.5505, -46.6333],
+
+[-23.4356, -46.4731],
+
+[41.6692, 44.9547],
+
+[41.7151, 44.8271],
+
+[40.1473, 44.3959],
+
+[40.1872, 44.5152],
+
+[43.2389, 76.8897]
+
+];
+
+
+/* =========================
+   INICIALIZAR MAPA
+========================= */
+
+function initializeMap() {
+
+
+map = L.map("map")
+.setView([35, 40], 3);
+
+
+L.tileLayer(
+
+"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+
+{
+
+maxZoom: 19,
+
+attribution:
+'© OpenStreetMap contributors'
 
 }
 
+).addTo(map);
+
+
+/* Criar marcadores */
+
+Object.keys(locations)
+.forEach(category => {
+
+
+locations[category]
+.forEach(location => {
+
+
+const marker =
+L.marker([
+location.lat,
+location.lng
+]);
+
+
+marker.bindPopup(`
+
+<strong>
+${location.name}
+</strong>
+
+<br>
+
+${location.type}
+
+<br><br>
+
+${location.description}
+
+`);
+
+
+marker.on(
+"click",
+function() {
+
+document
+.getElementById(
+"map-info-text"
+)
+.innerHTML = `
+
+<strong>
+${location.name}
+</strong>
+
+<br>
+
+${location.type}
+
+<br><br>
+
+${location.description}
+
+`;
+
+}
+
+);
+
+
+layers[category]
+.addLayer(marker);
+
+
+layers[category]
+.addTo(map);
+
+
+});
+
+});
+
+
+/* Criar rota */
+
+const route =
+L.polyline(
+
+routeCoordinates,
+
+{
+
+weight: 4
+
+}
+
+);
+
+
+layers.route
+.addLayer(route);
+
+
+layers.route
+.addTo(map);
+
+
+mapInitialized = true;
+
+
+}
+
+
+/* =========================
+   FILTROS
+========================= */
+
+function toggleLayer(category) {
+
+
+if(
+map.hasLayer(
+layers[category]
+)
+) {
+
+map.removeLayer(
+layers[category]
+);
+
+}
+
+else {
+
+layers[category]
+.addTo(map);
+
+}
+
+}
+
+
+/* =========================
+   SALVAR
+========================= */
 
 function saveData() {
 
-    localStorage.setItem(
-        "triperp_demo_saved",
-        new Date().toISOString()
-    );
 
-    alert(
-        "Informações salvas no navegador."
-    );
+localStorage.setItem(
+
+"triperp_h041_saved",
+
+new Date()
+.toISOString()
+
+);
+
+
+alert(
+
+"Informações salvas no navegador."
+
+);
 
 }
 
 
 </script>
 
+
 </body>
+
 </html>
