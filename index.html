@@ -1,42 +1,420 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TripERP H0.6</title>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TripERP H0.6.2 — Intelligent Itinerary & Detailed Budget</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font:14px Arial;background:#f4f6fa;color:#172033}aside{position:fixed;width:240px;height:100vh;background:#111827;color:white;padding:14px}aside h2{margin:8px 0 18px}aside button{width:100%;padding:10px;margin:2px 0;border:0;border-radius:7px;background:transparent;color:#cbd5e1;text-align:left;cursor:pointer}aside button:hover,.on{background:#1f2937!important;color:white!important}main{margin-left:240px}.top{height:60px;background:white;padding:20px;border-bottom:1px solid #ddd}.wrap{padding:20px;max-width:1400px}.page{display:none}.page.show{display:block}.hero{background:linear-gradient(135deg,#0f172a,#2563eb);color:white;padding:22px;border-radius:14px;margin-bottom:15px}.card{background:white;border:1px solid #dde3ea;border-radius:12px;padding:16px;margin-bottom:15px}.grid{display:grid;gap:12px}.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}label{font-size:12px;font-weight:bold;display:block;margin:8px 0 4px}input,select{width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:7px}.btn{padding:9px 13px;border:0;border-radius:7px;font-weight:bold;cursor:pointer;background:#2563eb;color:white}.gray{background:#eef2ff;color:#3730a3}.red{background:#fee2e2;color:#991b1b}.actions{text-align:right;margin-top:12px}.kpi{font-size:25px;font-weight:bold}.muted{color:#64748b;font-size:12px}.pill{padding:4px 8px;border-radius:99px;background:#e5e7eb;font-size:11px}table{width:100%;border-collapse:collapse}td,th{padding:9px;border-bottom:1px solid #e5e7eb;text-align:left}.check{padding:8px;border-bottom:1px solid #eee}.map{min-height:380px;background:#eaf1f8;border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;padding:30px}@media(max-width:800px){aside{width:65px;overflow:hidden}aside h2{font-size:0}main{margin-left:65px}.g2,.g3,.g4{grid-template-columns:1fr}}
-</style></head><body><aside><h2>✈️ TripERP H0.6</h2>
-<button class="on" onclick="go('dash',this)">📊 Dashboard</button><button onclick="go('projects',this)">🗂️ Minhas Viagens</button><button onclick="go('config',this)">🏠 Configuração</button><button onclick="go('dest',this)">🌎 Destinos</button><button onclick="go('exp',this)">⭐ Experiências & Dias</button><button onclick="go('route',this)">🤖 Roteiro Inteligente</button><button onclick="go('map',this)">🗺️ Mapa & Logística</button><button onclick="go('budget',this)">💰 Orçamento</button><button onclick="go('manual',this)">📘 Manual</button></aside>
-<main><div class="top"><b id="title">Nenhuma viagem selecionada</b> <span class="pill" id="status">H0.6</span></div><div class="wrap">
-<section id="dash" class="page show"><div class="hero"><h1>TripERP H0.6 — Intelligent Travel Planning Core</h1><p>Planejamento integrado da viagem, dos destinos ao roteiro aprovado.</p></div><div id="dashbody"></div></section>
-<section id="projects" class="page"><div class="hero"><h1>Minhas Viagens</h1><p>Crie, abra, duplique e exclua projetos independentes.</p></div><div class="card"><div class="grid g3"><div><label>Nome</label><input id="nn" placeholder="Ex.: Eurásia 2027"></div><div><label>Origem</label><input id="no" placeholder="São Paulo"></div><div><label>Dias</label><input id="nd" type="number" value="30"></div></div><div class="actions"><button class="btn" onclick="newTrip()">Criar viagem</button></div></div><div class="card"><table><thead><tr><th>Viagem</th><th>Origem</th><th>Dias</th><th>Status</th><th></th></tr></thead><tbody id="plist"></tbody></table></div></section>
-<section id="config" class="page"><div class="hero"><h1>Configuração</h1><p>Origem, retorno, duração, viajantes e orçamento.</p></div><div class="card" id="configbody"></div></section>
-<section id="dest" class="page"><div class="hero"><h1>Destinos Candidatos</h1><p>Cadastre lugares desejados sem definir a ordem.</p></div><div class="card"><div class="grid g3"><div><label>Cidade</label><input id="dc"></div><div><label>País</label><input id="dp"></div><div><label>Prioridade</label><select id="dpr"><option>Alta</option><option selected>Média</option><option>Baixa</option></select></div></div><label><input type="checkbox" id="dr"> Destino obrigatório</label><label>Observações</label><input id="dn"><div class="actions"><button class="btn" onclick="addDest()">Adicionar destino</button></div></div><div class="card"><table><thead><tr><th>Cidade</th><th>País</th><th>Prioridade</th><th>Dias</th><th></th></tr></thead><tbody id="dlist"></tbody></table></div></section>
-<section id="exp" class="page"><div class="hero"><h1>Experiências & Dias</h1><p>Escolha uma cidade cadastrada, selecione experiências e defina os dias na mesma tela.</p></div><div class="card" id="expbody"></div></section>
-<section id="route" class="page"><div class="hero"><h1>Roteiro Inteligente</h1><p>Transforma os destinos planejados em propostas de sequência.</p></div><div class="card" id="routebody"></div></section>
-<section id="map" class="page"><div class="hero"><h1>Mapa & Logística</h1><p>Central visual da sequência planejada.</p></div><div class="map" id="mapbody"></div></section>
-<section id="budget" class="page"><div class="hero"><h1>Orçamento</h1><p>Meta e categorias específicas da viagem.</p></div><div class="card" id="budgetbody"></div></section>
-<section id="manual" class="page"><div class="hero"><h1>Manual H0.6</h1><p>Roteiro para homologação.</p></div><div class="card"><ol><li>Crie uma viagem.</li><li>Configure origem, retorno, duração e orçamento.</li><li>Cadastre destinos sem se preocupar com a ordem.</li><li>Em Experiências & Dias, escolha uma cidade cadastrada.</li><li>Defina dias e marque atividades para cada cidade.</li><li>Gere propostas em Roteiro Inteligente.</li><li>Selecione uma proposta e veja Mapa & Logística.</li><li>Preencha o orçamento e aprove o roteiro.</li><li>Atualize a página para testar a persistência.</li></ol></div></section>
+:root{
+  --nav:#111827;--blue:#2563eb;--bg:#f4f6fa;--card:#fff;--line:#dbe2ea;
+  --muted:#64748b;--ok:#15803d;--warn:#b45309;--danger:#b91c1c;--purple:#7c3aed
+}
+*{box-sizing:border-box}
+body{margin:0;font:14px Arial,Helvetica,sans-serif;background:var(--bg);color:#172033}
+aside{position:fixed;left:0;top:0;bottom:0;width:250px;background:var(--nav);color:#fff;padding:14px;z-index:5;overflow:auto}
+aside h2{margin:8px 0 18px}
+aside button{width:100%;padding:10px;margin:3px 0;border:0;border-radius:8px;background:transparent;color:#cbd5e1;text-align:left;cursor:pointer}
+aside button:hover,.active{background:#1f2937!important;color:#fff!important}
+main{margin-left:250px}
+.top{height:62px;background:#fff;border-bottom:1px solid var(--line);padding:20px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:4}
+.wrap{padding:22px;max-width:1500px}
+.page{display:none}.page.show{display:block}
+.hero{background:linear-gradient(135deg,#0f172a,#2563eb);color:#fff;padding:24px;border-radius:15px;margin-bottom:16px}
+.hero h1{margin:0 0 6px}.hero p{margin:0;color:#dbeafe}
+.card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px;margin-bottom:15px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+label{font-size:12px;font-weight:700;display:block;margin:8px 0 4px}
+input,select,textarea{width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:8px;font:inherit}
+textarea{min-height:75px}
+.btn{padding:9px 13px;border:0;border-radius:8px;font-weight:700;cursor:pointer;background:var(--blue);color:#fff}
+.gray{background:#eef2ff;color:#3730a3}.ghost{background:#f1f5f9;color:#334155}.red{background:#fee2e2;color:#991b1b}.green{background:#dcfce7;color:#166534}.purple{background:#ede9fe;color:#6d28d9}
+.actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:12px}
+.kpi{font-size:25px;font-weight:800}.muted{color:var(--muted);font-size:12px}
+.pill{display:inline-block;padding:4px 8px;border-radius:99px;background:#e5e7eb;font-size:11px;font-weight:bold}
+table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px solid #e5e7eb;text-align:left;vertical-align:top}th{font-size:10px;color:var(--muted);text-transform:uppercase}
+.check{padding:8px;border-bottom:1px solid #eee}
+.notice{padding:12px;border-radius:9px;background:#eff6ff;color:#1d4ed8;margin-bottom:12px}
+.warn{background:#fff7ed;color:#9a3412}.ok{background:#f0fdf4;color:#166534}
+.poi{border:1px solid var(--line);border-radius:10px;padding:12px;margin:8px 0}
+.poi h4{margin:0 0 6px}
+.map{min-height:360px;background:#eaf1f8;border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;padding:30px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tabs button{border:0;padding:8px 11px;border-radius:8px;background:#e5e7eb;cursor:pointer}.tabs button.on{background:#2563eb;color:#fff}
+.timeline{border-left:3px solid #bfdbfe;padding-left:16px}.day{border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0;background:#fff}
+.sectiontitle{display:flex;justify-content:space-between;align-items:center;margin:12px 0}.sectiontitle h3{margin:0}
+.smallinput{max-width:150px}
+@media(max-width:900px){aside{width:72px;overflow:hidden}aside h2{font-size:0}aside button{font-size:0}aside button::first-letter{font-size:18px}main{margin-left:72px}.g2,.g3,.g4{grid-template-columns:1fr}.wrap{padding:14px}}
+</style>
+</head>
+<body>
+<aside>
+<h2>✈️ TripERP H0.6.2</h2>
+<button class="active" onclick="go('dash',this)">📊 Dashboard</button>
+<button onclick="go('projects',this)">🗂️ Minhas Viagens</button>
+<button onclick="go('config',this)">🏠 Configuração</button>
+<button onclick="go('dest',this)">🌎 Destinos</button>
+<button onclick="go('exp',this)">⭐ Experiências & Dias</button>
+<button onclick="go('route',this)">🤖 Roteiro Inteligente</button>
+<button onclick="go('map',this)">🗺️ Mapa & Logística</button>
+<button onclick="go('daily',this)">🗓️ Roteiro Dia a Dia</button>
+<button onclick="go('budget',this)">💰 Orçamento</button>
+<button onclick="go('settings',this)">🔐 Integrações</button>
+<button onclick="go('manual',this)">📘 Manual</button>
+</aside>
+
+<main>
+<div class="top"><b id="title">Nenhuma viagem selecionada</b><span class="pill" id="status">H0.6.2</span></div>
+<div class="wrap">
+
+<section id="dash" class="page show">
+<div class="hero"><h1>TripERP H0.6.2 — Intelligent Itinerary & Detailed Budget</h1><p>Geoapify + experiências por destino + roteiro + logística trecho a trecho + orçamento diário consolidado.</p></div>
+<div id="dashbody"></div>
+</section>
+
+<section id="projects" class="page">
+<div class="hero"><h1>Minhas Viagens</h1><p>Crie e gerencie projetos independentes.</p></div>
+<div class="card">
+<div class="grid g3">
+<div><label>Nome</label><input id="nn" placeholder="Ex.: Eurásia 2027"></div>
+<div><label>Origem</label><input id="no" placeholder="São Paulo"></div>
+<div><label>Dias</label><input id="nd" type="number" value="30"></div>
+</div>
+<div class="actions"><button class="btn" onclick="newTrip()">Criar viagem</button></div>
+</div>
+<div class="card"><table><thead><tr><th>Viagem</th><th>Origem</th><th>Dias</th><th>Status</th><th></th></tr></thead><tbody id="plist"></tbody></table></div>
+</section>
+
+<section id="config" class="page">
+<div class="hero"><h1>Configuração</h1><p>Origem, retorno, datas, viajantes e orçamento.</p></div>
+<div class="card" id="configbody"></div>
+</section>
+
+<section id="dest" class="page">
+<div class="hero"><h1>Destinos Candidatos</h1><p>Cadastre cidades sem definir a ordem. O TripERP pode localizar automaticamente cada destino.</p></div>
+<div class="card">
+<div class="grid g3">
+<div><label>Cidade</label><input id="dc"></div>
+<div><label>País</label><input id="dp"></div>
+<div><label>Prioridade</label><select id="dpr"><option>Alta</option><option selected>Média</option><option>Baixa</option></select></div>
+</div>
+<label><input type="checkbox" id="dr"> Destino obrigatório</label>
+<label>Observações</label><input id="dn">
+<div class="actions"><button class="btn" onclick="addDest()">Adicionar e localizar</button></div>
+</div>
+<div class="card"><table><thead><tr><th>Cidade</th><th>País</th><th>Prioridade</th><th>Localização</th><th>Dias</th><th></th></tr></thead><tbody id="dlist"></tbody></table></div>
+</section>
+
+<section id="exp" class="page">
+<div class="hero"><h1>Experiências & Dias</h1><p>Escolha um destino cadastrado, filtre por interesses, busque opções reais e defina quantos dias ficar.</p></div>
+<div class="card" id="expbody"></div>
+</section>
+
+<section id="route" class="page">
+<div class="hero"><h1>Roteiro Inteligente</h1><p>Gera propostas de sequência a partir dos destinos e suas prioridades.</p></div>
+<div class="card" id="routebody"></div>
+</section>
+
+<section id="map" class="page">
+<div class="hero"><h1>Mapa & Logística</h1><p>Sequência da viagem e custos de deslocamento trecho a trecho.</p></div>
+<div class="card" id="logisticsBody"></div>
+<div class="map" id="mapbody"></div>
+</section>
+
+<section id="daily" class="page">
+<div class="hero"><h1>Roteiro Dia a Dia</h1><p>Detalhamento diário de hospedagem, alimentação, transporte local, experiências e outros custos.</p></div>
+<div class="card" id="dailybody"></div>
+</section>
+
+<section id="budget" class="page">
+<div class="hero"><h1>Orçamento Consolidado</h1><p>Visões por categoria, destino, dia e status financeiro.</p></div>
+<div class="card" id="budgetbody"></div>
+</section>
+
+<section id="settings" class="page">
+<div class="hero"><h1>Integrações</h1><p>A chave Geoapify fica somente neste navegador.</p></div>
+<div class="card">
+<div class="notice">🔐 A chave é salva no <b>localStorage</b> e não é gravada no GitHub.</div>
+<label>Geoapify API Key</label>
+<input id="apiKey" type="password">
+<div class="actions"><button class="btn" onclick="saveKey()">Salvar chave</button><button class="btn red" onclick="removeKey()">Remover chave</button></div>
+<p id="geoStatus" class="muted"></p>
+</div>
+</section>
+
+<section id="manual" class="page">
+<div class="hero"><h1>Manual de Homologação H0.6.2</h1></div>
+<div class="card">
+<ol>
+<li>Configure a chave Geoapify em Integrações.</li>
+<li>Crie ou abra uma viagem.</li>
+<li>Cadastre destinos e confirme a localização automática.</li>
+<li>Em Experiências & Dias, busque opções reais e selecione atividades.</li>
+<li>Defina dias por destino.</li>
+<li>Gere uma proposta de roteiro.</li>
+<li>Em Mapa & Logística, cadastre custo trecho a trecho.</li>
+<li>Em Roteiro Dia a Dia, gere os dias da viagem e detalhe os custos.</li>
+<li>Revise o Orçamento Consolidado por categoria, destino e dia.</li>
+<li>Aprove o roteiro quando estiver satisfeito.</li>
+</ol>
+<div class="notice warn">O Roteiro Inteligente ainda não consulta voos/preços reais nem otimiza geograficamente de forma completa. O foco desta versão é integração funcional e orçamento detalhado.</div>
+</div>
+</section>
+
 </div></main>
+
 <script>
-const K='triperp_h06',A='triperp_h06_active',exps=['Centro histórico','Museus e patrimônio','Gastronomia local','Mercados e vida local','Natureza e parques','Bate-volta','Aventura / trilhas','Experiência cultural'],cats=['Voos internacionais','Voos internos','Transporte terrestre','Hospedagem','Alimentação','Experiências','Seguro','Comunicação','Reserva'];
-let trips=JSON.parse(localStorage.getItem(K)||'[]'),aid=localStorage.getItem(A)||null;
-const q=()=>trips.find(x=>x.id===aid),save=()=>{localStorage.setItem(K,JSON.stringify(trips));localStorage.setItem(A,aid||'');renderAll()},uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2),fmt=n=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0}).format(n||0);
-function go(x,b){document.querySelectorAll('.page').forEach(e=>e.classList.remove('show'));document.getElementById(x).classList.add('show');document.querySelectorAll('aside button').forEach(e=>e.classList.remove('on'));if(b)b.classList.add('on');render(x)}
-function need(){if(!q()){go('projects',[...document.querySelectorAll('aside button')][1]);return true}}
-function newTrip(){if(!nn.value.trim())return alert('Informe o nome.');let t={id:uid(),name:nn.value.trim(),origin:no.value.trim(),ret:no.value.trim(),days:+nd.value||30,travelers:1,budget:0,status:'Rascunho',dest:[],route:null,bc:{}};cats.forEach(c=>t.bc[c]=0);trips.push(t);aid=t.id;save();go('config')}
-function openT(i){aid=i;save();go('dash')} function dup(i){let t=JSON.parse(JSON.stringify(trips.find(x=>x.id===i)));t.id=uid();t.name+=' (cópia)';t.route=null;t.status='Rascunho';trips.push(t);aid=t.id;save()} function delT(i){if(confirm('Excluir esta viagem?')){trips=trips.filter(x=>x.id!==i);if(aid===i)aid=trips[0]?.id||null;save()}}
-function renderAll(){let t=q();title.textContent=t?t.name:'Nenhuma viagem selecionada';status.textContent=t?t.status:'H0.6';plist.innerHTML=trips.length?trips.map(t=>`<tr><td><b>${t.name}</b></td><td>${t.origin||'—'}</td><td>${t.days}</td><td>${t.status}</td><td><button class="btn" onclick="openT('${t.id}')">Abrir</button> <button class="btn gray" onclick="dup('${t.id}')">Duplicar</button> <button class="btn red" onclick="delT('${t.id}')">Excluir</button></td></tr>`).join(''):'<tr><td colspan="5">Nenhuma viagem.</td></tr>';let used=t?t.dest.reduce((s,d)=>s+(+d.days||0),0):0;dashbody.innerHTML=!t?`<div class="card"><h2>Comece criando uma viagem</h2><p>Use Minhas Viagens para criar seu primeiro projeto.</p></div>`:`<div class="grid g4"><div class="card"><span class="muted">Dias</span><div class="kpi">${t.days}</div><span class="muted">${used} distribuídos • ${t.days-used} restantes</span></div><div class="card"><span class="muted">Destinos</span><div class="kpi">${t.dest.length}</div></div><div class="card"><span class="muted">Orçamento</span><div class="kpi">${fmt(t.budget)}</div></div><div class="card"><span class="muted">Roteiro</span><div class="kpi">${t.route?'Proposto':'—'}</div></div></div>`}
-function render(x){let t=q();if(['config','dest','exp','route','map','budget'].includes(x)&&need())return;if(!t)return;
-if(x==='config')configbody.innerHTML=`<div class="grid g3"><div><label>Nome</label><input id="cn" value="${t.name}"></div><div><label>Origem</label><input id="co" value="${t.origin}"></div><div><label>Retorno</label><input id="cr" value="${t.ret}"></div><div><label>Dias</label><input id="cd" type="number" value="${t.days}"></div><div><label>Viajantes</label><input id="ct" type="number" value="${t.travelers}"></div><div><label>Orçamento</label><input id="cb" type="number" value="${t.budget}"></div></div><div class="actions"><button class="btn" onclick="saveCfg()">Salvar configuração</button></div>`;
-if(x==='dest')dlist.innerHTML=t.dest.length?t.dest.map((d,i)=>`<tr><td>${d.city}${d.required?' ★':''}</td><td>${d.country}</td><td>${d.priority}</td><td>${d.days||0}</td><td><button class="btn red" onclick="rmDest(${i})">Remover</button></td></tr>`).join(''):'<tr><td colspan="5">Nenhum destino.</td></tr>';
-if(x==='exp')renderExp(); if(x==='route')renderRoute(); if(x==='map')mapbody.innerHTML=t.dest.length?`<div><div style="font-size:48px">🗺️</div><h2>${[t.origin||'Origem',...(t.route?(t.route[t.route.sel]||[]):t.dest.map(d=>d.city)),t.ret||t.origin||'Retorno'].join(' → ')}</h2><p class="muted">Mapa lógico para homologação. A integração geográfica real fica para a próxima evolução.</p></div>`:'Cadastre destinos primeiro.';
-if(x==='budget'){let total=Object.values(t.bc).reduce((a,b)=>a+(+b||0),0);budgetbody.innerHTML=`<label>Meta total</label><input type="number" value="${t.budget}" onchange="q().budget=+this.value||0;save();render('budget')"><table><thead><tr><th>Categoria</th><th>Planejado</th></tr></thead><tbody>${cats.map(c=>`<tr><td>${c}</td><td><input type="number" value="${t.bc[c]||0}" onchange="q().bc['${c}']=+this.value||0;save();render('budget')"></td></tr>`).join('')}</tbody></table><p><b>Planejado:</b> ${fmt(total)} • <b>Saldo:</b> ${fmt(t.budget-total)}</p>`}}
-function saveCfg(){let t=q();Object.assign(t,{name:cn.value||t.name,origin:co.value,ret:cr.value,days:+cd.value||0,travelers:+ct.value||1,budget:+cb.value||0,status:'Em planejamento'});save();alert('Configuração salva.')}
-function addDest(){let t=q();if(!dc.value||!dp.value)return alert('Informe cidade e país.');t.dest.push({city:dc.value,country:dp.value,priority:dpr.value,required:dr.checked,notes:dn.value,days:0,experiences:[]});t.route=null;t.status='Em planejamento';save();render('dest')}
-function rmDest(i){q().dest.splice(i,1);q().route=null;save();render('dest')}
-function renderExp(){let t=q();if(!t.dest.length){expbody.innerHTML='Cadastre destinos primeiro.';return}expbody.innerHTML=`<div class="grid g2"><div><label>Destino cadastrado</label><select id="es" onchange="showExp()">${t.dest.map((d,i)=>`<option value="${i}">${d.city}, ${d.country}</option>`).join('')}</select></div><div><label>Dias neste destino</label><input id="eday" type="number" min="0" onchange="setDay()" value="${t.dest[0].days||0}"></div></div><div id="edetail"></div><div id="esum"></div>`;showExp()}
-function showExp(){let t=q(),i=+es.value,d=t.dest[i];eday.value=d.days||0;let rec=Math.max(1,Math.ceil(d.experiences.length/2));edetail.innerHTML=`<h3>${d.city}, ${d.country}</h3>${exps.map(e=>`<label class="check"><input type="checkbox" ${d.experiences.includes(e)?'checked':''} onchange="toggleExp(${i},'${e}',this.checked)"> ${e}</label>`).join('')}<p><b>${d.experiences.length}</b> experiências selecionadas. Recomendação demonstrativa: <b>${rec} dia(s)</b> <button class="btn gray" onclick="q().dest[${i}].days=${rec};q().route=null;save();showExp()">Aplicar recomendação</button></p>`;let u=t.dest.reduce((s,d)=>s+(+d.days||0),0);esum.innerHTML=`<div class="card"><b>Viagem:</b> ${t.days} dias disponíveis • ${u} distribuídos • ${t.days-u} restantes</div>`}
-function toggleExp(i,e,on){let d=q().dest[i];if(on&&!d.experiences.includes(e))d.experiences.push(e);if(!on)d.experiences=d.experiences.filter(x=>x!==e);q().route=null;save();showExp()}
-function setDay(){q().dest[+es.value].days=+eday.value||0;q().route=null;save();showExp()}
+const DK='triperp_h062_data',AK='triperp_h062_active',GK='triperp_geoapify_key';
+const budgetCats=['Hospedagem','Alimentação','Transporte local','Experiências','Outros'];
+const interestCategories={
+'História e patrimônio':'tourism.sights,entertainment.museum,historic',
+'Gastronomia':'catering.restaurant,catering.cafe',
+'Natureza':'natural,leisure.park',
+'Cultura':'tourism,entertainment.culture',
+'Compras':'commercial.shopping_mall,commercial.marketplace'
+};
+let trips=JSON.parse(localStorage.getItem(DK)||'[]'),activeId=localStorage.getItem(AK)||null;
+const active=()=>trips.find(x=>x.id===activeId),uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2);
+const fmt=n=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0}).format(+n||0);
+const apikey=()=>localStorage.getItem(GK)||'';
+
+function save(){localStorage.setItem(DK,JSON.stringify(trips));localStorage.setItem(AK,activeId||'');renderAll()}
+function go(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.remove('show'));document.getElementById(id).classList.add('show');document.querySelectorAll('aside button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');render(id)}
+function need(){if(!active()){go('projects',[...document.querySelectorAll('aside button')][1]);return true}}
+
+function newTrip(){
+ if(!nn.value.trim()) return alert('Informe o nome da viagem.');
+ let t={id:uid(),name:nn.value.trim(),origin:no.value.trim(),returnCity:no.value.trim(),start:'',end:'',days:+nd.value||30,travelers:1,budget:0,status:'Rascunho',destinations:[],route:null,segments:[],daily:[]};
+ trips.push(t);activeId=t.id;save();go('config')
+}
+function openTrip(id){activeId=id;save();go('dash')}
+function dupTrip(id){let t=JSON.parse(JSON.stringify(trips.find(x=>x.id===id)));t.id=uid();t.name+=' (cópia)';t.status='Rascunho';trips.push(t);activeId=t.id;save()}
+function delTrip(id){if(confirm('Excluir esta viagem?')){trips=trips.filter(x=>x.id!==id);if(activeId===id)activeId=trips[0]?.id||null;save()}}
+
+function renderAll(){
+ let t=active();
+ title.textContent=t?t.name:'Nenhuma viagem selecionada';
+ status.textContent=t?t.status:'H0.6.2';
+ plist.innerHTML=trips.length?trips.map(t=>`<tr><td><b>${t.name}</b></td><td>${t.origin||'—'}</td><td>${t.days}</td><td>${t.status}</td><td><button class="btn" onclick="openTrip('${t.id}')">Abrir</button> <button class="btn gray" onclick="dupTrip('${t.id}')">Duplicar</button> <button class="btn red" onclick="delTrip('${t.id}')">Excluir</button></td></tr>`).join(''):'<tr><td colspan="5">Nenhuma viagem.</td></tr>';
+ let used=t?t.destinations.reduce((s,d)=>s+(+d.days||0),0):0;
+ let seg=t?t.segments.reduce((s,x)=>s+(+x.estimated||0),0):0;
+ let day=t?t.daily.reduce((s,d)=>s+dayTotal(d),0):0;
+ dashbody.innerHTML=!t?'<div class="card"><h2>Comece criando uma viagem</h2></div>':
+ `<div class="grid g4">
+ <div class="card"><span class="muted">Dias</span><div class="kpi">${t.days}</div><span class="muted">${used} distribuídos • ${t.days-used} restantes</span></div>
+ <div class="card"><span class="muted">Destinos</span><div class="kpi">${t.destinations.length}</div></div>
+ <div class="card"><span class="muted">Orçamento</span><div class="kpi">${fmt(t.budget)}</div><span class="muted">Meta</span></div>
+ <div class="card"><span class="muted">Planejado</span><div class="kpi">${fmt(seg+day)}</div><span class="muted">Trechos + dia a dia</span></div>
+ </div>`;
+}
+
+function render(id){
+ let t=active();
+ if(['config','dest','exp','route','map','daily','budget'].includes(id)&&need())return;
+ if(id==='settings'){apiKey.value=apikey();geoStatus.textContent=apikey()?'Chave configurada neste navegador.':'Nenhuma chave configurada.';return}
+ if(!t)return;
+
+ if(id==='config') configbody.innerHTML=`<div class="grid g3">
+ <div><label>Nome</label><input id="cn" value="${t.name}"></div>
+ <div><label>Origem</label><input id="co" value="${t.origin}"></div>
+ <div><label>Retorno</label><input id="cr" value="${t.returnCity}"></div>
+ <div><label>Data de partida</label><input id="cs" type="date" value="${t.start||''}"></div>
+ <div><label>Data de retorno</label><input id="ce" type="date" value="${t.end||''}"></div>
+ <div><label>Duração planejada</label><input id="cd" type="number" value="${t.days}"></div>
+ <div><label>Viajantes</label><input id="ct" type="number" value="${t.travelers}"></div>
+ <div><label>Orçamento total</label><input id="cb" type="number" value="${t.budget}"></div>
+ </div><div class="actions"><button class="btn" onclick="saveConfig()">Salvar configuração</button></div>`;
+
+ if(id==='dest') dlist.innerHTML=t.destinations.length?t.destinations.map((d,i)=>`<tr>
+ <td><b>${d.city}</b>${d.required?' ★':''}<br><span class="muted">${d.notes||''}</span></td>
+ <td>${d.country}</td><td>${d.priority}</td>
+ <td>${d.lat&&d.lon?`${d.lat.toFixed(4)}, ${d.lon.toFixed(4)}`:'Não localizada'}</td>
+ <td>${d.days||0}</td>
+ <td><button class="btn gray" onclick="geocodeDest(${i})">Localizar</button> <button class="btn red" onclick="removeDest(${i})">Remover</button></td>
+ </tr>`).join(''):'<tr><td colspan="6">Nenhum destino.</td></tr>';
+
+ if(id==='exp') renderExperiences();
+ if(id==='route') renderRoute();
+ if(id==='map') renderLogistics();
+ if(id==='daily') renderDaily();
+ if(id==='budget') renderBudget();
+}
+
+function saveConfig(){
+ let t=active();Object.assign(t,{name:cn.value||t.name,origin:co.value,returnCity:cr.value,start:cs.value,end:ce.value,days:+cd.value||0,travelers:+ct.value||1,budget:+cb.value||0,status:'Em planejamento'});
+ save();alert('Configuração salva.')
+}
+
+async function addDest(){
+ let t=active();if(!dc.value||!dp.value)return alert('Informe cidade e país.');
+ let d={city:dc.value.trim(),country:dp.value.trim(),priority:dpr.value,required:dr.checked,notes:dn.value.trim(),days:0,experiences:[],pois:[],lat:null,lon:null};
+ t.destinations.push(d);t.route=null;t.status='Em planejamento';save();
+ if(apikey()) await geocodeDest(t.destinations.length-1);
+ render('dest')
+}
+function removeDest(i){active().destinations.splice(i,1);active().route=null;active().segments=[];save();render('dest')}
+
+function saveKey(){localStorage.setItem(GK,apiKey.value.trim());renderAll();geoStatus.textContent='Chave configurada neste navegador.';alert('Chave salva localmente.')}
+function removeKey(){localStorage.removeItem(GK);apiKey.value='';geoStatus.textContent='Nenhuma chave configurada.'}
+
+async function geocodeDest(i){
+ let t=active(),d=t.destinations[i];if(!apikey())return alert('Configure a chave Geoapify em Integrações.');
+ try{
+  let text=encodeURIComponent(`${d.city}, ${d.country}`);
+  let r=await fetch(`https://api.geoapify.com/v1/geocode/search?text=${text}&limit=1&apiKey=${encodeURIComponent(apikey())}`);
+  let j=await r.json();if(!j.features?.length)throw new Error('Destino não encontrado');
+  d.lon=j.features[0].geometry.coordinates[0];d.lat=j.features[0].geometry.coordinates[1];save();render('dest')
+ }catch(e){alert('Erro ao localizar: '+e.message)}
+}
+
+function renderExperiences(){
+ let t=active();if(!t.destinations.length){expbody.innerHTML='Cadastre destinos primeiro.';return}
+ expbody.innerHTML=`<div class="grid g2">
+ <div><label>Destino cadastrado</label><select id="es" onchange="showExperienceDest()">${t.destinations.map((d,i)=>`<option value="${i}">${d.city}, ${d.country}</option>`).join('')}</select></div>
+ <div><label>Dias neste destino</label><input id="eday" type="number" min="0" onchange="saveDestDays()" value="${t.destinations[0].days||0}"></div>
+ </div>
+ <div class="card"><h3>Interesses para busca</h3>
+ ${Object.keys(interestCategories).map(k=>`<label class="check"><input class="interest" type="checkbox" value="${k}" checked> ${k}</label>`).join('')}
+ <div class="actions"><button class="btn" onclick="searchPlaces()">Buscar experiências reais</button></div></div>
+ <div id="expdetail"></div><div id="daysummary"></div>`;
+ showExperienceDest()
+}
+function showExperienceDest(){
+ let t=active(),i=+es.value||0,d=t.destinations[i];eday.value=d.days||0;
+ let selected=d.experiences||[];
+ let list=(d.pois||[]).map(p=>`<div class="poi"><h4>${p.name}</h4><span class="muted">${p.category||''}</span>
+ <label><input type="checkbox" ${selected.includes(p.id)?'checked':''} onchange="togglePoi(${i},'${p.id}',this.checked)"> Quero incluir</label></div>`).join('');
+ let rec=Math.max(1,Math.ceil(selected.length/2));
+ expdetail.innerHTML=`<h3>${d.city}, ${d.country}</h3>${d.lat&&d.lon?'':'<div class="notice warn">Localize este destino primeiro.</div>'}${list||'<p class="muted">Nenhuma experiência carregada.</p>'}
+ <div class="notice"><b>${selected.length}</b> experiências selecionadas. Recomendação demonstrativa: <b>${rec} dia(s)</b> <button class="btn gray" onclick="applyDays(${i},${rec})">Aplicar</button></div>`;
+ let used=t.destinations.reduce((s,x)=>s+(+x.days||0),0);
+ daysummary.innerHTML=`<div class="card"><b>${t.days}</b> dias disponíveis • <b>${used}</b> distribuídos • <b>${t.days-used}</b> restantes</div>`
+}
+async function searchPlaces(){
+ let t=active(),i=+es.value,d=t.destinations[i];
+ if(!apikey())return alert('Configure a chave Geoapify.');
+ if(!d.lat||!d.lon)return alert('Localize o destino primeiro.');
+ let chosen=[...document.querySelectorAll('.interest:checked')].map(x=>x.value);
+ let categories=[...new Set(chosen.flatMap(k=>interestCategories[k].split(',')))].join(',');
+ try{
+  let url=`https://api.geoapify.com/v2/places?categories=${encodeURIComponent(categories)}&filter=circle:${d.lon},${d.lat},12000&bias=proximity:${d.lon},${d.lat}&limit=30&apiKey=${encodeURIComponent(apikey())}`;
+  let r=await fetch(url),j=await r.json();
+  d.pois=(j.features||[]).map((f,idx)=>({id:f.properties.place_id||`${i}_${idx}`,name:f.properties.name||f.properties.formatted||'Local',category:(f.properties.categories||[])[0]||'',lat:f.geometry.coordinates[1],lon:f.geometry.coordinates[0]}));
+  save();showExperienceDest()
+ }catch(e){alert('Erro na busca: '+e.message)}
+}
+function togglePoi(i,id,on){let d=active().destinations[i];if(on&&!d.experiences.includes(id))d.experiences.push(id);if(!on)d.experiences=d.experiences.filter(x=>x!==id);active().route=null;save();showExperienceDest()}
+function saveDestDays(){active().destinations[+es.value].days=+eday.value||0;active().route=null;save();showExperienceDest()}
+function applyDays(i,n){active().destinations[i].days=n;active().route=null;save();showExperienceDest()}
+
 function score(v){return v==='Alta'?3:v==='Média'?2:1}
-function genRoute(){let t=q(),a=[...t.dest].sort((x,y)=>(y.required-x.required)||score(y.priority)-score(x.priority)).map(d=>d.city),b=[...t.dest].sort((x,y)=>score(y.priority)-score(x.priority)||y.experiences.length-x.experiences.length).map(d=>d.city);t.route={efficient:a,experience:b,sel:'efficient'};t.status='Roteiro proposto';save();renderRoute()}
-function renderRoute(){let t=q();if(!t.dest.length){routebody.innerHTML='Cadastre destinos primeiro.';return}if(!t.route){routebody.innerHTML='<button class="btn" onclick="genRoute()">🤖 Gerar propostas</button>';return}let r=t.route,seq=k=>[t.origin||'Origem',...r[k],t.ret||t.origin||'Retorno'].join(' → ');routebody.innerHTML=`<div class="grid g2"><div class="card"><h3>🚀 Eficiência demonstrativa</h3><p>${seq('efficient')}</p><button class="btn ${r.sel==='efficient'?'':'gray'}" onclick="q().route.sel='efficient';save();renderRoute()">Selecionar</button></div><div class="card"><h3>⭐ Prioridade/experiências</h3><p>${seq('experience')}</p><button class="btn ${r.sel==='experience'?'':'gray'}" onclick="q().route.sel='experience';save();renderRoute()">Selecionar</button></div></div><div class="actions"><button class="btn" onclick="q().status='Roteiro aprovado';save();alert('Roteiro aprovado.')">✓ Aprovar roteiro</button></div><p class="muted">A ordenação é demonstrativa. Ainda não utiliza distâncias, voos ou rotas reais.</p>`}
+function generateRoute(){
+ let t=active();
+ if(!t.destinations.length)return alert('Cadastre destinos.');
+ let a=[...t.destinations].sort((x,y)=>(y.required-x.required)||score(y.priority)-score(x.priority)).map(d=>d.city);
+ let b=[...t.destinations].sort((x,y)=>(score(y.priority)-score(x.priority))||((y.experiences?.length||0)-(x.experiences?.length||0))).map(d=>d.city);
+ t.route={efficient:a,experience:b,sel:'efficient'};t.status='Roteiro proposto';rebuildSegments();save();renderRoute()
+}
+function renderRoute(){
+ let t=active();
+ if(!t.destinations.length){routebody.innerHTML='Cadastre destinos primeiro.';return}
+ if(!t.route){routebody.innerHTML='<button class="btn" onclick="generateRoute()">🤖 Gerar propostas</button>';return}
+ let r=t.route,seq=k=>[t.origin||'Origem',...r[k],t.returnCity||t.origin||'Retorno'].join(' → ');
+ routebody.innerHTML=`<div class="grid g2">
+ <div class="card"><h3>🚀 Eficiência demonstrativa</h3><p>${seq('efficient')}</p><button class="btn ${r.sel==='efficient'?'':'gray'}" onclick="selectRoute('efficient')">Selecionar</button></div>
+ <div class="card"><h3>⭐ Prioridade + experiências</h3><p>${seq('experience')}</p><button class="btn ${r.sel==='experience'?'':'gray'}" onclick="selectRoute('experience')">Selecionar</button></div>
+ </div><div class="actions"><button class="btn green" onclick="approveRoute()">✓ Aprovar roteiro</button></div>
+ <p class="muted">Ainda não há otimização geográfica completa. A próxima evolução poderá usar distâncias e rotas reais.</p>`
+}
+function selectRoute(k){active().route.sel=k;rebuildSegments();save();renderRoute()}
+function approveRoute(){active().status='Roteiro aprovado';rebuildSegments();save();alert('Roteiro aprovado.');}
+
+function routeSequence(){
+ let t=active();if(!t)return[];
+ let seq=t.route?(t.route[t.route.sel]||[]):t.destinations.map(d=>d.city);
+ return [t.origin||'Origem',...seq,t.returnCity||t.origin||'Retorno']
+}
+function rebuildSegments(){
+ let t=active(),seq=routeSequence(),old=t.segments||[];
+ t.segments=[];
+ for(let i=0;i<seq.length-1;i++){
+  let found=old.find(s=>s.from===seq[i]&&s.to===seq[i+1]);
+  t.segments.push(found||{id:uid(),from:seq[i],to:seq[i+1],mode:'A definir',date:'',duration:'',estimated:0,reserved:0,paid:0,notes:''})
+ }
+}
+
+function renderLogistics(){
+ let t=active();if(!t.route){logisticsBody.innerHTML='<p>Gere um roteiro primeiro.</p>';mapbody.innerHTML='Sem rota.';return}
+ rebuildSegments();
+ logisticsBody.innerHTML=`<h3>Deslocamentos trecho a trecho</h3><table><thead><tr><th>Trecho</th><th>Meio</th><th>Data</th><th>Duração</th><th>Estimado</th><th>Reservado</th><th>Pago</th></tr></thead><tbody>
+ ${t.segments.map((s,i)=>`<tr>
+ <td><b>${s.from} → ${s.to}</b><br><input value="${s.notes||''}" placeholder="Observações" onchange="setSeg(${i},'notes',this.value)"></td>
+ <td><select onchange="setSeg(${i},'mode',this.value)">${['A definir','Voo','Trem','Ônibus','Carro/transfer','Barco'].map(m=>`<option ${s.mode===m?'selected':''}>${m}</option>`).join('')}</select></td>
+ <td><input type="date" value="${s.date||''}" onchange="setSeg(${i},'date',this.value)"></td>
+ <td><input value="${s.duration||''}" placeholder="Ex.: 4h" onchange="setSeg(${i},'duration',this.value)"></td>
+ <td><input type="number" value="${s.estimated||0}" onchange="setSeg(${i},'estimated',this.value)"></td>
+ <td><input type="number" value="${s.reserved||0}" onchange="setSeg(${i},'reserved',this.value)"></td>
+ <td><input type="number" value="${s.paid||0}" onchange="setSeg(${i},'paid',this.value)"></td>
+ </tr>`).join('')}</tbody></table>`;
+ mapbody.innerHTML=`<div><div style="font-size:48px">🗺️</div><h2>${routeSequence().join(' → ')}</h2><p class="muted">${t.destinations.filter(d=>d.lat&&d.lon).length} de ${t.destinations.length} destinos geocodificados.</p></div>`;
+}
+function setSeg(i,k,v){let s=active().segments[i];s[k]=['estimated','reserved','paid'].includes(k)?(+v||0):v;save()}
+
+function generateDaily(){
+ let t=active();t.daily=[];
+ let day=1;
+ let seq=t.route?(t.route[t.route.sel]||[]):t.destinations.map(d=>d.city);
+ for(let city of seq){
+  let d=t.destinations.find(x=>x.city===city);
+  let n=Math.max(1,+d.days||1);
+  for(let j=0;j<n;j++){
+   t.daily.push({id:uid(),day:day++,city,hotel:0,food:0,local:0,experiences:0,other:0,hotelName:'',notes:''})
+  }
+ }
+ save();renderDaily()
+}
+function dayTotal(d){return (+d.hotel||0)+(+d.food||0)+(+d.local||0)+(+d.experiences||0)+(+d.other||0)}
+function renderDaily(){
+ let t=active();
+ if(!t.route){dailybody.innerHTML='<p>Gere um roteiro primeiro.</p>';return}
+ if(!t.daily.length){dailybody.innerHTML='<button class="btn" onclick="generateDaily()">Gerar roteiro dia a dia</button>';return}
+ dailybody.innerHTML=`<div class="actions"><button class="btn gray" onclick="generateDaily()">Regenerar dias</button></div><div class="timeline">
+ ${t.daily.map((d,i)=>`<div class="day"><div class="sectiontitle"><h3>Dia ${d.day} — ${d.city}</h3><b>${fmt(dayTotal(d))}</b></div>
+ <div class="grid g3">
+ <div><label>Hospedagem / hotel</label><input value="${d.hotelName||''}" placeholder="Nome do hotel" onchange="setDayField(${i},'hotelName',this.value)"><input type="number" value="${d.hotel||0}" placeholder="Custo" onchange="setDayField(${i},'hotel',this.value)"></div>
+ <div><label>Alimentação</label><input type="number" value="${d.food||0}" onchange="setDayField(${i},'food',this.value)"></div>
+ <div><label>Transporte local</label><input type="number" value="${d.local||0}" onchange="setDayField(${i},'local',this.value)"></div>
+ <div><label>Experiências</label><input type="number" value="${d.experiences||0}" onchange="setDayField(${i},'experiences',this.value)"></div>
+ <div><label>Outros</label><input type="number" value="${d.other||0}" onchange="setDayField(${i},'other',this.value)"></div>
+ <div><label>Observações</label><input value="${d.notes||''}" onchange="setDayField(${i},'notes',this.value)"></div>
+ </div></div>`).join('')}</div>`;
+}
+function setDayField(i,k,v){active().daily[i][k]=['hotel','food','local','experiences','other'].includes(k)?(+v||0):v;save();renderDaily()}
+
+function renderBudget(){
+ let t=active(),segEst=t.segments.reduce((s,x)=>s+(+x.estimated||0),0),segRes=t.segments.reduce((s,x)=>s+(+x.reserved||0),0),segPaid=t.segments.reduce((s,x)=>s+(+x.paid||0),0),dayTotalAll=t.daily.reduce((s,d)=>s+dayTotal(d),0),planned=segEst+dayTotalAll;
+ let byCat={Hospedagem:0,Alimentação:0,'Transporte local':0,Experiências:0,Outros:0,Deslocamentos:segEst};
+ t.daily.forEach(d=>{byCat.Hospedagem+=+d.hotel||0;byCat.Alimentação+=+d.food||0;byCat['Transporte local']+=+d.local||0;byCat.Experiências+=+d.experiences||0;byCat.Outros+=+d.other||0});
+ let byDest={};t.daily.forEach(d=>byDest[d.city]=(byDest[d.city]||0)+dayTotal(d));
+ budgetbody.innerHTML=`<div class="grid g4">
+ <div class="card"><span class="muted">Meta</span><div class="kpi">${fmt(t.budget)}</div></div>
+ <div class="card"><span class="muted">Planejado</span><div class="kpi">${fmt(planned)}</div></div>
+ <div class="card"><span class="muted">Disponível</span><div class="kpi">${fmt(t.budget-planned)}</div></div>
+ <div class="card"><span class="muted">Custo médio/dia</span><div class="kpi">${fmt(t.days?planned/t.days:0)}</div></div>
+ </div>
+ <div class="tabs"><button class="on" onclick="budgetTab('cat',this)">Por categoria</button><button onclick="budgetTab('dest',this)">Por destino</button><button onclick="budgetTab('day',this)">Por dia</button><button onclick="budgetTab('status',this)">Estimado × Reservado × Pago</button></div>
+ <div id="budgetTabBox"></div>`;
+ window._budgetCache={byCat,byDest,segEst,segRes,segPaid,planned};
+ budgetTab('cat',document.querySelector('.tabs button'))
+}
+function budgetTab(kind,btn){
+ document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));if(btn)btn.classList.add('on');
+ let t=active(),c=window._budgetCache||{};
+ if(kind==='cat')budgetTabBox.innerHTML=`<table><thead><tr><th>Categoria</th><th>Planejado</th></tr></thead><tbody>${Object.entries(c.byCat||{}).map(([k,v])=>`<tr><td>${k}</td><td>${fmt(v)}</td></tr>`).join('')}</tbody></table>`;
+ if(kind==='dest')budgetTabBox.innerHTML=`<table><thead><tr><th>Destino</th><th>Planejado dia a dia</th></tr></thead><tbody>${Object.entries(c.byDest||{}).map(([k,v])=>`<tr><td>${k}</td><td>${fmt(v)}</td></tr>`).join('')}</tbody></table>`;
+ if(kind==='day')budgetTabBox.innerHTML=`<table><thead><tr><th>Dia</th><th>Cidade</th><th>Hospedagem</th><th>Alimentação</th><th>Local</th><th>Experiências</th><th>Outros</th><th>Total</th></tr></thead><tbody>${t.daily.map(d=>`<tr><td>${d.day}</td><td>${d.city}</td><td>${fmt(d.hotel)}</td><td>${fmt(d.food)}</td><td>${fmt(d.local)}</td><td>${fmt(d.experiences)}</td><td>${fmt(d.other)}</td><td><b>${fmt(dayTotal(d))}</b></td></tr>`).join('')}</tbody></table>`;
+ if(kind==='status')budgetTabBox.innerHTML=`<div class="grid g3"><div class="card"><span class="muted">Deslocamentos estimados</span><div class="kpi">${fmt(c.segEst)}</div></div><div class="card"><span class="muted">Deslocamentos reservados</span><div class="kpi">${fmt(c.segRes)}</div></div><div class="card"><span class="muted">Deslocamentos pagos</span><div class="kpi">${fmt(c.segPaid)}</div></div></div><p class="muted">Na próxima evolução, hospedagem e experiências também poderão ter status estimado/reservado/pago individualmente.</p>`;
+}
+
 renderAll();
-</script></body></html>
+</script>
+</body>
+</html>

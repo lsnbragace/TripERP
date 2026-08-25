@@ -1,17 +1,25 @@
-# TripERP H0.6 — Intelligent Travel Planning Core
+# TripERP H0.6.2 — Intelligent Itinerary & Detailed Budget
 
-Versão funcional para homologação.
+Versão consolidada com todas as melhorias até esta etapa.
 
-## Escopo
-- múltiplas viagens independentes;
-- configuração integrada;
-- destinos sem ordem prévia;
-- Experiências & Dias por destino;
-- propostas demonstrativas de roteiro;
-- mapa lógico da sequência;
-- orçamento por categorias;
-- aprovação por status;
-- persistência via localStorage.
+## Inclui
+- múltiplas viagens;
+- Geoapify configurado localmente;
+- geocodificação automática;
+- busca real de experiências por destino;
+- Experiências & Dias na mesma tela;
+- propostas de roteiro;
+- logística trecho a trecho;
+- roteiro dia a dia;
+- orçamento diário;
+- orçamento por categoria;
+- orçamento por destino;
+- orçamento por dia;
+- estimado × reservado × pago para deslocamentos;
+- persistência em localStorage.
 
-## Publicação
-Substitua o `index.html` do repositório pela versão H0.6, adicione os arquivos `.md` e faça commit.
+## Segurança
+A chave Geoapify permanece apenas no navegador do usuário.
+
+## Limitações
+O Roteiro Inteligente ainda não usa uma otimização geográfica completa nem consulta voos e preços reais.
