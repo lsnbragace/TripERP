@@ -1,10 +1,14 @@
-# H0.6.3
+# Changelog
 
-- abas 1 e 2 invertidas;
-- formulários limpos após inclusão;
-- teste Geoapify;
-- busca Places revisada;
-- BRL/USD/EUR;
-- taxas médias e margem cambial;
-- campos monetários step=10;
-- formatação e conversão monetária.
+## H0.6.4
+- Viagens & Configuração unificadas.
+- Viagem ativa visível em todo o sistema.
+- Seletor rápido de viagem ativa.
+- Menu lateral recolhível restaurado.
+- Correções de responsividade e sobreposição.
+- Curadoria de experiências.
+- Roteiro reordenável.
+- Gestão de impactos após alterações.
+- Cadastro operacional de transportes e hotéis.
+- Datas reais no roteiro dia a dia.
+- Integração dos custos ao orçamento.
