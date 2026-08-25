@@ -1,15 +1,17 @@
-# TripERP H0.5 — Intelligent Travel Planning
+# TripERP H0.6 — Intelligent Travel Planning Core
 
-MVP de homologação da nova arquitetura do TripERP.
+Versão funcional para homologação.
 
-## Teste rápido
-Abra `index.html` no navegador. Para publicar no GitHub Pages, envie os arquivos deste pacote ao repositório e faça o commit.
+## Escopo
+- múltiplas viagens independentes;
+- configuração integrada;
+- destinos sem ordem prévia;
+- Experiências & Dias por destino;
+- propostas demonstrativas de roteiro;
+- mapa lógico da sequência;
+- orçamento por categorias;
+- aprovação por status;
+- persistência via localStorage.
 
-## Arquivos
-- `index.html` — aplicação H0.5
-- `ARQUITETURA_FUNCIONAL_H0.5.md` — arquitetura funcional
-- `MANUAL_HOMOLOGACAO_H0.5.md` — roteiro de homologação
-- `CHANGELOG.md` — mudanças da versão
-
-## Escopo H0.5
-A versão valida o fluxo e a experiência do produto. Integrações externas, dados em tempo real e persistência de servidor ficam para etapas posteriores.
+## Publicação
+Substitua o `index.html` do repositório pela versão H0.6, adicione os arquivos `.md` e faça commit.
