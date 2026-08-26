@@ -1,13 +1,9 @@
-# TripERP H0.6.7 — Integrated Calendar & Traveler Costs
+# TripERP H0.6.8 — Editable Trips & Final Lock
 
-## Novidades
-- dias da viagem calculados automaticamente entre partida e retorno;
-- calendário central derivado do período da viagem;
-- datas sugeridas para cidades, transportes e hospedagens;
-- itens reservados/pagos preservam a data e geram alerta de conflito;
-- Dia a Dia herda a linha do tempo da viagem;
-- custos por pessoa multiplicados pelo número de viajantes;
-- custos coletivos por grupo/veículo e hospedagem por reserva/quarto;
-- quantidade de unidades para custos coletivos;
-- custo total e custo médio por viajante;
-- mantém hotéis editáveis, múltiplos hotéis, agenda diária, experiências, mapa e gráficos.
+- botão Editar em cada viagem;
+- durante planejamento: edição de nome, origem, retorno, datas, viajantes, moeda, orçamento, câmbio e margem;
+- mudança de datas/origem/retorno recalcula duração/calendário e marca revisão necessária;
+- botão Confirmar viagem após aprovação do roteiro;
+- após confirmação: origem, retorno e datas ficam protegidos;
+- viajantes, orçamento e parâmetros financeiros continuam editáveis;
+- Reabrir planejamento libera novamente os campos estruturais.

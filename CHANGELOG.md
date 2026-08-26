@@ -1,5 +1,6 @@
-# H0.6.7
-- calendário integrado
-- dias automáticos
-- datas derivadas do roteiro
-- custos por viajante e por grupo
+# H0.6.8
+- edição de viagens;
+- confirmação final;
+- bloqueio de datas/origem/retorno;
+- demais parâmetros permanecem editáveis;
+- reabertura do planejamento.

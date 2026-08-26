@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TripERP H0.6.7 — Integrated Calendar & Traveler Costs</title>
+<title>TripERP H0.6.8 — Editable Trips & Final Lock</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 :root{--bg:#f4f6fa;--card:#fff;--nav:#111827;--nav2:#1f2937;--text:#172033;--muted:#64748b;--line:#dbe2ea;--blue:#2563eb;--green:#15803d;--red:#b91c1c;--shadow:0 8px 24px rgba(15,23,42,.07)}
@@ -43,7 +43,7 @@ main{margin-left:252px;transition:.2s;min-height:100vh}.sidebar.collapsed~main{m
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
-<div class="brand"><span class="logo">✈️</span><span>TripERP H0.6.7</span></div>
+<div class="brand"><span class="logo">✈️</span><span>TripERP H0.6.8</span></div>
 <button class="collapse-btn" onclick="sidebar.classList.toggle('collapsed')">☰</button>
 <nav>
 <button class="active" onclick="go('dashboard',this)"><span class="navico">📊</span><span class="label">Dashboard</span></button>
@@ -61,12 +61,12 @@ main{margin-left:252px;transition:.2s;min-height:100vh}.sidebar.collapsed~main{m
 
 <main>
 <header class="topbar">
-<div class="active-trip"><div><small>Viagem ativa</small><br><strong id="activeTripName">Nenhuma viagem</strong></div><span class="badge" id="activeTripStatus">H0.6.7</span></div>
+<div class="active-trip"><div><small>Viagem ativa</small><br><strong id="activeTripName">Nenhuma viagem</strong></div><span class="badge" id="activeTripStatus">H0.6.8</span></div>
 <select id="tripSwitcher" class="trip-select" onchange="switchTrip(this.value)"></select>
 </header>
 <div class="content">
 
-<section id="dashboard" class="page active"><div class="hero"><h1>TripERP H0.6.7</h1><p>Mapa geográfico real, logística vertical e curadoria de experiências com nomes legíveis para o viajante.</p></div><div id="dashboardBody"></div></section>
+<section id="dashboard" class="page active"><div class="hero"><h1>TripERP H0.6.8</h1><p>Mapa geográfico real, logística vertical e curadoria de experiências com nomes legíveis para o viajante.</p></div><div id="dashboardBody"></div></section>
 
 <section id="trips" class="page"><div class="hero"><h1>1. Viagens & Configuração</h1><p>Crie a viagem já com período, orçamento, moeda e taxas.</p></div>
 <div class="card"><div class="grid g3">
@@ -75,7 +75,7 @@ main{margin-left:252px;transition:.2s;min-height:100vh}.sidebar.collapsed~main{m
 <div class="field"><label>Número de viajantes</label><input id="newTravelers" type="number" min="1" value="1"><span class="money-note">Custos por pessoa serão multiplicados automaticamente.</span></div><div class="field"><label>Moeda-base</label><select id="newCurrency"><option>BRL</option><option>USD</option><option>EUR</option></select></div><div class="field"><label>Orçamento</label><input id="newBudget" type="number" step="10" value="0"></div>
 <div class="field"><label>1 USD = R$</label><input id="newUSD" type="number" step="0.01" value="5.40"></div><div class="field"><label>1 EUR = R$</label><input id="newEUR" type="number" step="0.01" value="6.30"></div><div class="field"><label>Margem de segurança cambial (%)</label><input id="newMargin" type="number" value="0"><span class="money-note">Folga aplicada apenas à conversão do orçamento; 0% usa a taxa cadastrada sem acréscimo.</span></div>
 </div><div class="actions"><button class="btn" onclick="createTrip()">Criar viagem</button></div></div>
-<div class="card"><div class="tablewrap"><table><thead><tr><th>Viagem</th><th>Origem</th><th>Período</th><th>Status</th><th></th></tr></thead><tbody id="tripsTable"></tbody></table></div></div></section>
+<div class="card" id="editTripCard" style="display:none"><h3>✏️ Editar viagem</h3><div id="editTripBody"></div></div><div class="card"><div class="tablewrap"><table><thead><tr><th>Viagem</th><th>Origem</th><th>Período</th><th>Status</th><th></th></tr></thead><tbody id="tripsTable"></tbody></table></div></div></section>
 
 <section id="destinations" class="page"><div class="hero"><h1>2. Destinos</h1><p>Cadastre as cidades em qualquer ordem.</p></div>
 <div class="card"><div class="grid g3"><div class="field"><label>Cidade</label><input id="destCity"></div><div class="field"><label>País</label><input id="destCountry"></div><div class="field"><label>Prioridade</label><select id="destPriority"><option>Alta</option><option selected>Média</option><option>Baixa</option></select></div></div>
@@ -97,7 +97,7 @@ main{margin-left:252px;transition:.2s;min-height:100vh}.sidebar.collapsed~main{m
 
 <section id="integrations" class="page"><div class="hero"><h1>Integrações</h1><p>Geoapify para geocodificação, Places e tiles do mapa.</p></div><div class="card"><div class="notice">🔐 A chave fica apenas neste navegador.</div><div class="field"><label>Geoapify API Key</label><input id="apiKeyInput" type="password"></div><div class="actions"><button class="btn" onclick="saveApiKey()">Salvar</button><button class="btn secondary" onclick="testGeoapify()">Testar conexão</button><button class="btn danger" onclick="removeApiKey()">Remover</button></div><div id="geoDiag"></div></div></section>
 
-<section id="manual" class="page"><div class="hero"><h1>Manual H0.6.7</h1></div><div class="card"><ol>
+<section id="manual" class="page"><div class="hero"><h1>Manual H0.6.8</h1></div><div class="card"><ol>
 <li>Configure Geoapify.</li><li>Crie a viagem e cadastre destinos.</li><li>Busque experiências curadas e marque as que deseja incluir.</li><li>Defina dias e gere/reordene o roteiro.</li><li>Cadastre e revise transportes e vários hotéis por cidade.</li><li>Informe o valor total de cada reserva; confira noites e diária calculada.</li><li>Gere o Roteiro Dia a Dia.</li><li>Escolha o hotel de cada noite quando houver mais de uma opção.</li><li>Inclua experiências selecionadas ou atividades manuais: restaurantes, tours, bate-voltas e transporte local.</li><li>Revise os gráficos e detalhamento do Orçamento.</li></ol></div></section>
 
 </div>
@@ -121,9 +121,9 @@ function ensureTrip(){if(!current()){navTo('trips');return false}return true}
 function switchTrip(id){if(!id)return;activeId=id;persist();renderPage(document.querySelector('.page.active')?.id||'dashboard')}
 
 function renderShell(){
- let t=current();activeTripName.textContent=t?t.name:'Nenhuma viagem';activeTripStatus.textContent=t?(t.needsReview?'Revisão necessária':t.status):'H0.6.7';
+ let t=current();activeTripName.textContent=t?t.name:'Nenhuma viagem';activeTripStatus.textContent=t?(t.needsReview?'Revisão necessária':t.status):'H0.6.8';
  tripSwitcher.innerHTML=trips.length?trips.map(x=>`<option value="${x.id}" ${x.id===activeId?'selected':''}>${x.name}</option>`).join(''):'<option value="">Nenhuma viagem</option>';
- tripsTable.innerHTML=trips.length?trips.map(x=>`<tr><td><b>${x.name}</b></td><td>${x.origin||'—'}</td><td>${safeDate(x.start)||'—'} → ${safeDate(x.end)||'—'}</td><td><span class="pill ${x.needsReview?'review':x.status==='Roteiro aprovado'?'approved':''}">${x.needsReview?'Revisão necessária':x.status}</span></td><td><button class="btn" onclick="openTrip('${x.id}')">Abrir</button> <button class="btn secondary" onclick="duplicateTrip('${x.id}')">Duplicar</button> <button class="btn danger" onclick="deleteTrip('${x.id}')">Excluir</button></td></tr>`).join(''):'<tr><td colspan="5">Nenhuma viagem.</td></tr>';
+ tripsTable.innerHTML=trips.length?trips.map(x=>`<tr><td><b>${x.name}</b></td><td>${x.origin||'—'}</td><td>${safeDate(x.start)||'—'} → ${safeDate(x.end)||'—'}</td><td><span class="pill ${x.needsReview?'review':x.status==='Roteiro aprovado'?'approved':''}">${x.needsReview?'Revisão necessária':x.status}</span></td><td><button class="btn" onclick="openTrip('${x.id}')">Abrir</button> <button class="btn secondary" onclick="editTrip('${x.id}')">Editar</button> <button class="btn secondary" onclick="duplicateTrip('${x.id}')">Duplicar</button> <button class="btn danger" onclick="deleteTrip('${x.id}')">Excluir</button></td></tr>`).join(''):'<tr><td colspan="5">Nenhuma viagem.</td></tr>';
  renderDashboard()
 }
 
@@ -136,6 +136,63 @@ function createTrip(){
  trips.push(t);activeId=t.id;persist();
  newName.value='';newOrigin.value='';newReturn.value='';newStart.value='';newEnd.value='';newDays.value='0';newTravelers.value='1';newCurrency.value='BRL';newBudget.value='0';newUSD.value='5.40';newEUR.value='6.30';newMargin.value='0';navTo('destinations')
 }
+
+function editTrip(id){
+ activeId=id;persist();let t=current(),locked=t.status==='Viagem confirmada';
+ editTripCard.style.display='block';
+ editTripBody.innerHTML=`${locked?'<div class="notice">🔒 Origem, retorno e datas estão protegidos porque a viagem está confirmada. Os demais dados continuam editáveis.</div>':''}
+ <div class="grid g3">
+ <div class="field"><label>Nome</label><input id="editName" value="${t.name||''}"></div>
+ <div class="field"><label>Origem</label><input id="editOrigin" value="${t.origin||''}" ${locked?'disabled':''}></div>
+ <div class="field"><label>Retorno</label><input id="editReturn" value="${t.returnCity||''}" ${locked?'disabled':''}></div>
+ <div class="field"><label>Partida</label><input id="editStart" type="date" value="${t.start||''}" ${locked?'disabled':''}></div>
+ <div class="field"><label>Retorno</label><input id="editEnd" type="date" value="${t.end||''}" ${locked?'disabled':''}></div>
+ <div class="field"><label>Dias</label><input id="editDays" value="${t.days||0}" disabled></div>
+ <div class="field"><label>Viajantes</label><input id="editTravelers" type="number" min="1" value="${t.travelers||1}"></div>
+ <div class="field"><label>Moeda-base</label><select id="editCurrency"><option ${t.baseCurrency==='BRL'?'selected':''}>BRL</option><option ${t.baseCurrency==='USD'?'selected':''}>USD</option><option ${t.baseCurrency==='EUR'?'selected':''}>EUR</option></select></div>
+ <div class="field"><label>Orçamento</label><input id="editBudget" type="number" step="10" value="${t.budget||0}"></div>
+ <div class="field"><label>1 USD = R$</label><input id="editUSD" type="number" step="0.01" value="${t.rates?.USD||5.4}"></div>
+ <div class="field"><label>1 EUR = R$</label><input id="editEUR" type="number" step="0.01" value="${t.rates?.EUR||6.3}"></div>
+ <div class="field"><label>Margem de segurança cambial (%)</label><input id="editMargin" type="number" value="${t.margin||0}"></div>
+ </div>
+ <div class="actions">
+ ${locked?'<button class="btn secondary" onclick="reopenPlanning()">Reabrir planejamento</button>':''}
+ <button class="btn success" onclick="saveTripEdits()">Salvar alterações</button>
+ <button class="btn secondary" onclick="editTripCard.style.display='none'">Fechar</button>
+ </div>`;
+ if(!locked){
+   ['editStart','editEnd'].forEach(id=>document.getElementById(id).addEventListener('change',()=>{editDays.value=tripDaysBetween(editStart.value,editEnd.value)||0}))
+ }
+}
+function saveTripEdits(){
+ let t=current(),locked=t.status==='Viagem confirmada',oldStart=t.start,oldEnd=t.end,oldOrigin=t.origin,oldReturn=t.returnCity;
+ t.name=editName.value.trim()||t.name;
+ t.travelers=+editTravelers.value||1;
+ t.baseCurrency=editCurrency.value;
+ t.budget=+editBudget.value||0;
+ t.rates.USD=+editUSD.value||t.rates.USD;
+ t.rates.EUR=+editEUR.value||t.rates.EUR;
+ t.margin=+editMargin.value||0;
+ if(!locked){
+   if(!editStart.value||!editEnd.value||tripDaysBetween(editStart.value,editEnd.value)<1)return alert('Informe um período válido.');
+   t.origin=editOrigin.value.trim();t.returnCity=editReturn.value.trim();t.start=editStart.value;t.end=editEnd.value;t.days=tripDaysBetween(t.start,t.end);
+   if(oldStart!==t.start||oldEnd!==t.end||oldOrigin!==t.origin||oldReturn!==t.returnCity){
+      t.needsReview=true;t.status='Em planejamento';autoCalendar();t.daily=[]
+   }
+ }
+ persist();editTrip(t.id);alert('Viagem atualizada.')
+}
+function confirmTrip(){
+ let t=current();
+ if(t.needsReview)return alert('Revise e aprove o roteiro antes de confirmar a viagem.');
+ if(t.status!=='Roteiro aprovado')return alert('Aprove o roteiro antes de confirmar a viagem.');
+ t.status='Viagem confirmada';persist();alert('Viagem confirmada. Datas, origem e retorno foram protegidos.')
+}
+function reopenPlanning(){
+ let t=current();if(!confirm('Reabrir o planejamento? Datas, origem e retorno voltarão a ser editáveis.'))return;
+ t.status='Em planejamento';t.needsReview=true;persist();editTrip(t.id)
+}
+
 function openTrip(id){activeId=id;persist();navTo('dashboard')}
 function duplicateTrip(id){let x=trips.find(t=>t.id===id),c=JSON.parse(JSON.stringify(x));c.id=uid();c.name=x.name+' (cópia)';c.status='Em planejamento';c.needsReview=false;trips.push(c);activeId=c.id;persist()}
 function deleteTrip(id){if(!confirm('Excluir esta viagem?'))return;trips=trips.filter(t=>t.id!==id);if(activeId===id)activeId=trips[0]?.id||null;persist()}
@@ -187,10 +244,10 @@ function saveExpDays(){current().destinations[+expDest.value].days=+expDays.valu
 
 function priorityScore(v){return v==='Alta'?3:v==='Média'?2:1}
 function generateRoute(){let t=current();t.route=[...t.destinations].sort((a,b)=>(b.required-a.required)||priorityScore(b.priority)-priorityScore(a.priority)||((b.selected?.length||0)-(a.selected?.length||0))).map(d=>d.city);t.status='Roteiro proposto';t.needsReview=false;autoCalendar();persist();renderSmartRoute()}
-function renderSmartRoute(){if(!ensureTrip())return;let t=current();if(!t.destinations.length){smartRouteBody.innerHTML='Cadastre destinos.';return}if(!t.route.length){smartRouteBody.innerHTML='<button class="btn" onclick="generateRoute()">🤖 Gerar roteiro sugerido</button>';return}smartRouteBody.innerHTML=`${t.needsReview?'<div class="notice danger">⚠️ Revise o roteiro após as alterações.</div>':''}<div class="route-list">${t.route.map((c,i)=>`<div class="route-item"><span class="pill">${i+1}</span><strong>${c}</strong><div class="route-controls"><button onclick="moveRoute(${i},-1)">↑</button><button onclick="moveRoute(${i},1)">↓</button></div></div>`).join('')}</div><div class="notice"><b>${[t.origin,...t.route,t.returnCity].join(' → ')}</b></div><div class="actions"><button class="btn secondary" onclick="generateRoute()">Recalcular</button><button class="btn success" onclick="approveRoute()">Aprovar</button></div>`}
+function renderSmartRoute(){if(!ensureTrip())return;let t=current();if(!t.destinations.length){smartRouteBody.innerHTML='Cadastre destinos.';return}if(!t.route.length){smartRouteBody.innerHTML='<button class="btn" onclick="generateRoute()">🤖 Gerar roteiro sugerido</button>';return}smartRouteBody.innerHTML=`${t.needsReview?'<div class="notice danger">⚠️ Revise o roteiro após as alterações.</div>':''}<div class="route-list">${t.route.map((c,i)=>`<div class="route-item"><span class="pill">${i+1}</span><strong>${c}</strong><div class="route-controls"><button onclick="moveRoute(${i},-1)">↑</button><button onclick="moveRoute(${i},1)">↓</button></div></div>`).join('')}</div><div class="notice"><b>${[t.origin,...t.route,t.returnCity].join(' → ')}</b></div><div class="actions"><button class="btn secondary" onclick="generateRoute()">Recalcular</button><button class="btn success" onclick="approveRoute()">Aprovar</button>${t.status==='Roteiro aprovado'?'<button class="btn success" onclick="confirmTrip()">Confirmar viagem</button>':''}${t.status==='Viagem confirmada'?'<span class="pill approved">Viagem confirmada</span>':''}</div>`}
 function moveRoute(i,dir){let t=current(),j=i+dir;if(j<0||j>=t.route.length)return;[t.route[i],t.route[j]]=[t.route[j],t.route[i]];markChanged();autoCalendar();persist();renderSmartRoute()}
 function approveRoute(){let t=current();t.status='Roteiro aprovado';t.needsReview=false;autoCalendar();persist();alert('Roteiro aprovado e calendário recalculado.')}
-function markChanged(){let t=current();if(t.route.length)t.needsReview=true;t.daily=[]}
+function markChanged(){let t=current();if(t.status==='Viagem confirmada')t.status='Em planejamento';if(t.route.length)t.needsReview=true;t.daily=[]}
 function routeSequence(){let t=current(),r=t.route.length?t.route:t.destinations.map(d=>d.city);return [t.origin||'Origem',...r,t.returnCity||t.origin||'Retorno']}
 
 function citySchedule(){let t=current(),date=t.start||'',out={};for(let city of t.route){let d=t.destinations.find(x=>x.city===city),days=Math.max(1,+d?.days||1),start=date,end=date?addDays(date,days):'';out[city]={start,end,days};date=end}return out}
