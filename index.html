@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TripERP H0.6.6 — Daily Planner & Financial Dashboard</title>
+<title>TripERP H0.6.7 — Integrated Calendar & Traveler Costs</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 :root{--bg:#f4f6fa;--card:#fff;--nav:#111827;--nav2:#1f2937;--text:#172033;--muted:#64748b;--line:#dbe2ea;--blue:#2563eb;--green:#15803d;--red:#b91c1c;--shadow:0 8px 24px rgba(15,23,42,.07)}
@@ -43,7 +43,7 @@ main{margin-left:252px;transition:.2s;min-height:100vh}.sidebar.collapsed~main{m
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
-<div class="brand"><span class="logo">✈️</span><span>TripERP H0.6.6</span></div>
+<div class="brand"><span class="logo">✈️</span><span>TripERP H0.6.7</span></div>
 <button class="collapse-btn" onclick="sidebar.classList.toggle('collapsed')">☰</button>
 <nav>
 <button class="active" onclick="go('dashboard',this)"><span class="navico">📊</span><span class="label">Dashboard</span></button>
@@ -61,18 +61,18 @@ main{margin-left:252px;transition:.2s;min-height:100vh}.sidebar.collapsed~main{m
 
 <main>
 <header class="topbar">
-<div class="active-trip"><div><small>Viagem ativa</small><br><strong id="activeTripName">Nenhuma viagem</strong></div><span class="badge" id="activeTripStatus">H0.6.6</span></div>
+<div class="active-trip"><div><small>Viagem ativa</small><br><strong id="activeTripName">Nenhuma viagem</strong></div><span class="badge" id="activeTripStatus">H0.6.7</span></div>
 <select id="tripSwitcher" class="trip-select" onchange="switchTrip(this.value)"></select>
 </header>
 <div class="content">
 
-<section id="dashboard" class="page active"><div class="hero"><h1>TripERP H0.6.6</h1><p>Mapa geográfico real, logística vertical e curadoria de experiências com nomes legíveis para o viajante.</p></div><div id="dashboardBody"></div></section>
+<section id="dashboard" class="page active"><div class="hero"><h1>TripERP H0.6.7</h1><p>Mapa geográfico real, logística vertical e curadoria de experiências com nomes legíveis para o viajante.</p></div><div id="dashboardBody"></div></section>
 
 <section id="trips" class="page"><div class="hero"><h1>1. Viagens & Configuração</h1><p>Crie a viagem já com período, orçamento, moeda e taxas.</p></div>
 <div class="card"><div class="grid g3">
 <div class="field"><label>Nome</label><input id="newName"></div><div class="field"><label>Origem</label><input id="newOrigin"></div><div class="field"><label>Retorno</label><input id="newReturn"></div>
-<div class="field"><label>Partida</label><input id="newStart" type="date"></div><div class="field"><label>Retorno</label><input id="newEnd" type="date"></div><div class="field"><label>Dias</label><input id="newDays" type="number" value="30"></div>
-<div class="field"><label>Viajantes</label><input id="newTravelers" type="number" value="1"></div><div class="field"><label>Moeda-base</label><select id="newCurrency"><option>BRL</option><option>USD</option><option>EUR</option></select></div><div class="field"><label>Orçamento</label><input id="newBudget" type="number" step="10" value="0"></div>
+<div class="field"><label>Partida</label><input id="newStart" type="date"></div><div class="field"><label>Retorno</label><input id="newEnd" type="date"></div><div class="field"><label>Dias da viagem</label><input id="newDays" type="number" value="0" readonly><span class="money-note">Calculado automaticamente entre partida e retorno, incluindo os dois dias.</span></div>
+<div class="field"><label>Número de viajantes</label><input id="newTravelers" type="number" min="1" value="1"><span class="money-note">Custos por pessoa serão multiplicados automaticamente.</span></div><div class="field"><label>Moeda-base</label><select id="newCurrency"><option>BRL</option><option>USD</option><option>EUR</option></select></div><div class="field"><label>Orçamento</label><input id="newBudget" type="number" step="10" value="0"></div>
 <div class="field"><label>1 USD = R$</label><input id="newUSD" type="number" step="0.01" value="5.40"></div><div class="field"><label>1 EUR = R$</label><input id="newEUR" type="number" step="0.01" value="6.30"></div><div class="field"><label>Margem de segurança cambial (%)</label><input id="newMargin" type="number" value="0"><span class="money-note">Folga aplicada apenas à conversão do orçamento; 0% usa a taxa cadastrada sem acréscimo.</span></div>
 </div><div class="actions"><button class="btn" onclick="createTrip()">Criar viagem</button></div></div>
 <div class="card"><div class="tablewrap"><table><thead><tr><th>Viagem</th><th>Origem</th><th>Período</th><th>Status</th><th></th></tr></thead><tbody id="tripsTable"></tbody></table></div></div></section>
@@ -97,7 +97,7 @@ main{margin-left:252px;transition:.2s;min-height:100vh}.sidebar.collapsed~main{m
 
 <section id="integrations" class="page"><div class="hero"><h1>Integrações</h1><p>Geoapify para geocodificação, Places e tiles do mapa.</p></div><div class="card"><div class="notice">🔐 A chave fica apenas neste navegador.</div><div class="field"><label>Geoapify API Key</label><input id="apiKeyInput" type="password"></div><div class="actions"><button class="btn" onclick="saveApiKey()">Salvar</button><button class="btn secondary" onclick="testGeoapify()">Testar conexão</button><button class="btn danger" onclick="removeApiKey()">Remover</button></div><div id="geoDiag"></div></div></section>
 
-<section id="manual" class="page"><div class="hero"><h1>Manual H0.6.6</h1></div><div class="card"><ol>
+<section id="manual" class="page"><div class="hero"><h1>Manual H0.6.7</h1></div><div class="card"><ol>
 <li>Configure Geoapify.</li><li>Crie a viagem e cadastre destinos.</li><li>Busque experiências curadas e marque as que deseja incluir.</li><li>Defina dias e gere/reordene o roteiro.</li><li>Cadastre e revise transportes e vários hotéis por cidade.</li><li>Informe o valor total de cada reserva; confira noites e diária calculada.</li><li>Gere o Roteiro Dia a Dia.</li><li>Escolha o hotel de cada noite quando houver mais de uma opção.</li><li>Inclua experiências selecionadas ou atividades manuais: restaurantes, tours, bate-voltas e transporte local.</li><li>Revise os gráficos e detalhamento do Orçamento.</li></ol></div></section>
 
 </div>
@@ -121,16 +121,20 @@ function ensureTrip(){if(!current()){navTo('trips');return false}return true}
 function switchTrip(id){if(!id)return;activeId=id;persist();renderPage(document.querySelector('.page.active')?.id||'dashboard')}
 
 function renderShell(){
- let t=current();activeTripName.textContent=t?t.name:'Nenhuma viagem';activeTripStatus.textContent=t?(t.needsReview?'Revisão necessária':t.status):'H0.6.6';
+ let t=current();activeTripName.textContent=t?t.name:'Nenhuma viagem';activeTripStatus.textContent=t?(t.needsReview?'Revisão necessária':t.status):'H0.6.7';
  tripSwitcher.innerHTML=trips.length?trips.map(x=>`<option value="${x.id}" ${x.id===activeId?'selected':''}>${x.name}</option>`).join(''):'<option value="">Nenhuma viagem</option>';
  tripsTable.innerHTML=trips.length?trips.map(x=>`<tr><td><b>${x.name}</b></td><td>${x.origin||'—'}</td><td>${safeDate(x.start)||'—'} → ${safeDate(x.end)||'—'}</td><td><span class="pill ${x.needsReview?'review':x.status==='Roteiro aprovado'?'approved':''}">${x.needsReview?'Revisão necessária':x.status}</span></td><td><button class="btn" onclick="openTrip('${x.id}')">Abrir</button> <button class="btn secondary" onclick="duplicateTrip('${x.id}')">Duplicar</button> <button class="btn danger" onclick="deleteTrip('${x.id}')">Excluir</button></td></tr>`).join(''):'<tr><td colspan="5">Nenhuma viagem.</td></tr>';
  renderDashboard()
 }
+
+function tripDaysBetween(a,b){if(!a||!b)return 0;let x=new Date(a+'T12:00:00'),y=new Date(b+'T12:00:00');if(isNaN(x)||isNaN(y)||y<x)return 0;return Math.floor((y-x)/86400000)+1}
+function refreshNewTripDays(){newDays.value=tripDaysBetween(newStart.value,newEnd.value)||0}
+document.addEventListener('change',e=>{if(e.target?.id==='newStart'||e.target?.id==='newEnd')refreshNewTripDays()});
 function createTrip(){
- if(!newName.value.trim())return alert('Informe o nome.');
- let t={id:uid(),name:newName.value.trim(),origin:newOrigin.value.trim(),returnCity:newReturn.value.trim()||newOrigin.value.trim(),start:newStart.value,end:newEnd.value,days:+newDays.value||30,travelers:+newTravelers.value||1,baseCurrency:newCurrency.value,budget:+newBudget.value||0,rates:{BRL:1,USD:+newUSD.value||5.4,EUR:+newEUR.value||6.3},margin:+newMargin.value||0,status:'Em planejamento',needsReview:false,destinations:[],route:[],transports:[],hotels:[],daily:[]};
+ if(!newName.value.trim())return alert('Informe o nome.');if(!newStart.value||!newEnd.value||tripDaysBetween(newStart.value,newEnd.value)<1)return alert('Informe um período válido.');
+ let t={id:uid(),name:newName.value.trim(),origin:newOrigin.value.trim(),returnCity:newReturn.value.trim()||newOrigin.value.trim(),start:newStart.value,end:newEnd.value,days:tripDaysBetween(newStart.value,newEnd.value),travelers:+newTravelers.value||1,baseCurrency:newCurrency.value,budget:+newBudget.value||0,rates:{BRL:1,USD:+newUSD.value||5.4,EUR:+newEUR.value||6.3},margin:+newMargin.value||0,status:'Em planejamento',needsReview:false,destinations:[],route:[],transports:[],hotels:[],daily:[]};
  trips.push(t);activeId=t.id;persist();
- newName.value='';newOrigin.value='';newReturn.value='';newStart.value='';newEnd.value='';newDays.value='30';newTravelers.value='1';newCurrency.value='BRL';newBudget.value='0';newUSD.value='5.40';newEUR.value='6.30';newMargin.value='0';navTo('destinations')
+ newName.value='';newOrigin.value='';newReturn.value='';newStart.value='';newEnd.value='';newDays.value='0';newTravelers.value='1';newCurrency.value='BRL';newBudget.value='0';newUSD.value='5.40';newEUR.value='6.30';newMargin.value='0';navTo('destinations')
 }
 function openTrip(id){activeId=id;persist();navTo('dashboard')}
 function duplicateTrip(id){let x=trips.find(t=>t.id===id),c=JSON.parse(JSON.stringify(x));c.id=uid();c.name=x.name+' (cópia)';c.status='Em planejamento';c.needsReview=false;trips.push(c);activeId=c.id;persist()}
@@ -182,13 +186,16 @@ function toggleExperience(i,id,on){let d=current().destinations[i];if(on&&!d.sel
 function saveExpDays(){current().destinations[+expDest.value].days=+expDays.value||0;markChanged();persist()}
 
 function priorityScore(v){return v==='Alta'?3:v==='Média'?2:1}
-function generateRoute(){let t=current();t.route=[...t.destinations].sort((a,b)=>(b.required-a.required)||priorityScore(b.priority)-priorityScore(a.priority)||((b.selected?.length||0)-(a.selected?.length||0))).map(d=>d.city);t.status='Roteiro proposto';t.needsReview=false;syncTransports();persist();renderSmartRoute()}
+function generateRoute(){let t=current();t.route=[...t.destinations].sort((a,b)=>(b.required-a.required)||priorityScore(b.priority)-priorityScore(a.priority)||((b.selected?.length||0)-(a.selected?.length||0))).map(d=>d.city);t.status='Roteiro proposto';t.needsReview=false;autoCalendar();persist();renderSmartRoute()}
 function renderSmartRoute(){if(!ensureTrip())return;let t=current();if(!t.destinations.length){smartRouteBody.innerHTML='Cadastre destinos.';return}if(!t.route.length){smartRouteBody.innerHTML='<button class="btn" onclick="generateRoute()">🤖 Gerar roteiro sugerido</button>';return}smartRouteBody.innerHTML=`${t.needsReview?'<div class="notice danger">⚠️ Revise o roteiro após as alterações.</div>':''}<div class="route-list">${t.route.map((c,i)=>`<div class="route-item"><span class="pill">${i+1}</span><strong>${c}</strong><div class="route-controls"><button onclick="moveRoute(${i},-1)">↑</button><button onclick="moveRoute(${i},1)">↓</button></div></div>`).join('')}</div><div class="notice"><b>${[t.origin,...t.route,t.returnCity].join(' → ')}</b></div><div class="actions"><button class="btn secondary" onclick="generateRoute()">Recalcular</button><button class="btn success" onclick="approveRoute()">Aprovar</button></div>`}
-function moveRoute(i,dir){let t=current(),j=i+dir;if(j<0||j>=t.route.length)return;[t.route[i],t.route[j]]=[t.route[j],t.route[i]];markChanged();syncTransports();persist();renderSmartRoute()}
-function approveRoute(){let t=current();t.status='Roteiro aprovado';t.needsReview=false;syncTransports();persist();alert('Roteiro aprovado.')}
+function moveRoute(i,dir){let t=current(),j=i+dir;if(j<0||j>=t.route.length)return;[t.route[i],t.route[j]]=[t.route[j],t.route[i]];markChanged();autoCalendar();persist();renderSmartRoute()}
+function approveRoute(){let t=current();t.status='Roteiro aprovado';t.needsReview=false;autoCalendar();persist();alert('Roteiro aprovado e calendário recalculado.')}
 function markChanged(){let t=current();if(t.route.length)t.needsReview=true;t.daily=[]}
 function routeSequence(){let t=current(),r=t.route.length?t.route:t.destinations.map(d=>d.city);return [t.origin||'Origem',...r,t.returnCity||t.origin||'Retorno']}
-function syncTransports(){let t=current(),seq=routeSequence(),old=t.transports||[],next=[];for(let i=0;i<seq.length-1;i++){let f=old.find(x=>x.from===seq[i]&&x.to===seq[i+1]);next.push(f||{id:uid(),from:seq[i],to:seq[i+1],type:'A definir',date:'',depart:'',arrive:'',company:'',reference:'',status:'A pesquisar',currency:t.baseCurrency,estimated:0,reserved:0,paid:0})}t.transports=next}
+
+function citySchedule(){let t=current(),date=t.start||'',out={};for(let city of t.route){let d=t.destinations.find(x=>x.city===city),days=Math.max(1,+d?.days||1),start=date,end=date?addDays(date,days):'';out[city]={start,end,days};date=end}return out}
+function autoCalendar(){let t=current();if(!t||!t.start)return;let sch=citySchedule();syncTransports();t.transports.forEach((x,i)=>{let suggested=i===0?t.start:(sch[x.from]?.end||sch[x.to]?.start||'');if(!x.date||!['Reservado','Pago'].includes(x.status))x.date=suggested;else x.dateConflict=x.date!==suggested?`Reservado ${safeDate(x.date)} × sugerido ${safeDate(suggested)}`:''});t.hotels.forEach(h=>{let q=sch[h.city];if(!q)return;if(!h.checkin||!['Reservado','Pago'].includes(h.status))h.checkin=q.start;if(!h.checkout||!['Reservado','Pago'].includes(h.status))h.checkout=q.end})}
+function syncTransports(){let t=current(),seq=routeSequence(),old=t.transports||[],next=[];for(let i=0;i<seq.length-1;i++){let f=old.find(x=>x.from===seq[i]&&x.to===seq[i+1]);next.push(f||{id:uid(),from:seq[i],to:seq[i+1],type:'A definir',date:'',depart:'',arrive:'',company:'',reference:'',status:'A pesquisar',currency:t.baseCurrency,estimated:0,reserved:0,paid:0,billing:'Por pessoa',quantity:1})}t.transports=next}
 
 function initMap(){
  if(!apiKey()||!document.getElementById('realMap'))return;
@@ -209,7 +216,7 @@ function initMap(){
 function renderLogistics(){
  if(!ensureTrip())return;let t=current();if(!t.route.length){transportBody.innerHTML='Gere um roteiro primeiro.';hotelBody.innerHTML='';setTimeout(initMap,50);return}syncTransports();
  changeWarning.innerHTML=t.needsReview?'<div class="notice danger">⚠️ Roteiro alterado — revise transportes, hotéis e dia a dia.</div>':'';
- transportBody.innerHTML=t.transports.map((x,i)=>`<div class="card"><h3>${x.from} → ${x.to}</h3><div class="grid g3"><div class="field"><label>Tipo</label><select onchange="setTransport(${i},'type',this.value)">${['A definir','Voo','Trem','Ônibus','Carro/transfer','Barco'].map(v=>`<option ${x.type===v?'selected':''}>${v}</option>`).join('')}</select></div><div class="field"><label>Data</label><input type="date" value="${x.date||''}" onchange="setTransport(${i},'date',this.value)"></div><div class="field"><label>Status</label><select onchange="setTransport(${i},'status',this.value)">${['A pesquisar','Selecionado','Reservado','Pago','Realizado','Cancelado'].map(v=>`<option ${x.status===v?'selected':''}>${v}</option>`).join('')}</select></div><div class="field"><label>Saída</label><input type="time" value="${x.depart||''}" onchange="setTransport(${i},'depart',this.value)"></div><div class="field"><label>Chegada</label><input type="time" value="${x.arrive||''}" onchange="setTransport(${i},'arrive',this.value)"></div><div class="field"><label>Empresa / voo / trem</label><input value="${x.company||''}" onchange="setTransport(${i},'company',this.value)"></div><div class="field"><label>Localizador</label><input value="${x.reference||''}" onchange="setTransport(${i},'reference',this.value)"></div><div class="field"><label>Moeda</label><select onchange="setTransport(${i},'currency',this.value)">${['BRL','USD','EUR'].map(c=>`<option ${x.currency===c?'selected':''}>${c}</option>`).join('')}</select></div><div class="field"><label>Estimado</label><input type="number" step="10" value="${x.estimated||0}" onchange="setTransport(${i},'estimated',this.value)"><span class="money-note">${money(x.estimated,x.currency)} ≈ ${money(toBase(x.estimated,x.currency),t.baseCurrency)}</span></div><div class="field"><label>Reservado</label><input type="number" step="10" value="${x.reserved||0}" onchange="setTransport(${i},'reserved',this.value)"></div><div class="field"><label>Pago</label><input type="number" step="10" value="${x.paid||0}" onchange="setTransport(${i},'paid',this.value)"></div></div></div>`).join('');
+ transportBody.innerHTML=t.transports.map((x,i)=>`<div class="card"><h3>${x.from} → ${x.to}</h3><div class="grid g3"><div class="field"><label>Tipo</label><select onchange="setTransport(${i},'type',this.value)">${['A definir','Voo','Trem','Ônibus','Carro/transfer','Barco'].map(v=>`<option ${x.type===v?'selected':''}>${v}</option>`).join('')}</select></div><div class="field"><label>Data</label><input type="date" value="${x.date||''}" onchange="setTransport(${i},'date',this.value)">${x.dateConflict?`<span class="warnline">⚠️ ${x.dateConflict}</span>`:''}</div><div class="field"><label>Status</label><select onchange="setTransport(${i},'status',this.value)">${['A pesquisar','Selecionado','Reservado','Pago','Realizado','Cancelado'].map(v=>`<option ${x.status===v?'selected':''}>${v}</option>`).join('')}</select></div><div class="field"><label>Saída</label><input type="time" value="${x.depart||''}" onchange="setTransport(${i},'depart',this.value)"></div><div class="field"><label>Chegada</label><input type="time" value="${x.arrive||''}" onchange="setTransport(${i},'arrive',this.value)"></div><div class="field"><label>Empresa / voo / trem</label><input value="${x.company||''}" onchange="setTransport(${i},'company',this.value)"></div><div class="field"><label>Localizador</label><input value="${x.reference||''}" onchange="setTransport(${i},'reference',this.value)"></div><div class="field"><label>Moeda</label><select onchange="setTransport(${i},'currency',this.value)">${['BRL','USD','EUR'].map(c=>`<option ${x.currency===c?'selected':''}>${c}</option>`).join('')}</select></div><div class="field"><label>Estimado unitário</label><input type="number" step="10" value="${x.estimated||0}" onchange="setTransport(${i},'estimated',this.value)"></div><div class="field"><label>Cobrança</label><select onchange="setTransport(${i},'billing',this.value)">${['Por pessoa','Total do grupo','Por veículo'].map(v=>`<option ${((x.billing||'Por pessoa')===v)?'selected':''}>${v}</option>`).join('')}</select></div><div class="field"><label>Quantidade</label><input type="number" min="1" value="${x.quantity||1}" onchange="setTransport(${i},'quantity',this.value)"></div><div class="field"><label>Reservado</label><input type="number" step="10" value="${x.reserved||0}" onchange="setTransport(${i},'reserved',this.value)"></div><div class="field"><label>Pago</label><input type="number" step="10" value="${x.paid||0}" onchange="setTransport(${i},'paid',this.value)"></div></div></div>`).join('');
  hotelBody.innerHTML=`<div class="notice">Cadastre o <b>valor total da reserva</b>. O TripERP calcula automaticamente noites e valor médio por noite. Você pode revisar qualquer hotel abaixo.</div>
  <div class="grid g3"><div class="field"><label>Cidade</label><select id="hotelCity">${t.destinations.map(d=>`<option>${d.city}</option>`).join('')}</select></div><div class="field"><label>Hotel</label><input id="hotelName"></div><div class="field"><label>Endereço</label><input id="hotelAddress"></div><div class="field"><label>Check-in</label><input id="hotelCheckin" type="date"></div><div class="field"><label>Check-out</label><input id="hotelCheckout" type="date"></div><div class="field"><label>Quarto</label><input id="hotelRoom"></div><div class="field"><label>Hóspedes</label><input id="hotelGuests" type="number" value="1"></div><div class="field"><label>Localizador</label><input id="hotelRef"></div><div class="field"><label>Plataforma/contato</label><input id="hotelPlatform"></div><div class="field"><label>Moeda</label><select id="hotelCurrency"><option>BRL</option><option>USD</option><option>EUR</option></select></div><div class="field"><label>Valor total da reserva</label><input id="hotelTotal" type="number" step="10" value="0"></div><div class="field"><label>Reservado</label><input id="hotelReserved" type="number" step="10" value="0"></div><div class="field"><label>Pago</label><input id="hotelPaid" type="number" step="10" value="0"></div><div class="field"><label>Status</label><select id="hotelStatus"><option>A pesquisar</option><option>Selecionado</option><option>Reservado</option><option>Pago</option><option>Utilizado</option><option>Cancelado</option></select></div><div class="field"><label>Cancelamento</label><input id="hotelCancel"></div></div><div class="actions"><button class="btn" onclick="addHotel()">Adicionar hotel</button></div>
  ${t.hotels.length?t.hotels.map((h,i)=>`<div class="hotel-edit"><h4>${h.city} — ${h.name||'Hotel'}</h4><div class="grid g3">
@@ -222,23 +229,23 @@ function renderLogistics(){
  <div class="field"><label>Localizador</label><input value="${h.reference||''}" onchange="setHotel(${i},'reference',this.value)"></div>
  <div class="field"><label>Plataforma/contato</label><input value="${h.platform||''}" onchange="setHotel(${i},'platform',this.value)"></div>
  <div class="field"><label>Moeda</label><select onchange="setHotel(${i},'currency',this.value)">${['BRL','USD','EUR'].map(c=>`<option ${h.currency===c?'selected':''}>${c}</option>`).join('')}</select></div>
- <div class="field"><label>Valor total</label><input type="number" step="10" value="${h.total||0}" onchange="setHotel(${i},'total',this.value)"></div>
+ <div class="field"><label>Valor por reserva/quarto</label><input type="number" step="10" value="${h.total||0}" onchange="setHotel(${i},'total',this.value)"></div><div class="field"><label>Qtd. quartos/reservas</label><input type="number" min="1" value="${h.quantity||1}" onchange="setHotel(${i},'quantity',this.value)"></div>
  <div class="field"><label>Reservado</label><input type="number" step="10" value="${h.reserved||0}" onchange="setHotel(${i},'reserved',this.value)"></div>
  <div class="field"><label>Pago</label><input type="number" step="10" value="${h.paid||0}" onchange="setHotel(${i},'paid',this.value)"></div>
  </div><div class="notice">${nightsBetween(h.checkin,h.checkout)} noite(s) × ${money(hotelNightly(h),h.currency)} = <b>${money(h.total,h.currency)}</b> total</div><div class="actions"><button class="btn danger" onclick="removeHotel(${i})">Remover</button></div></div>`).join(''):'<p class="muted">Nenhum hotel cadastrado.</p>'}`;
  setTimeout(initMap,80)
 }
-function setTransport(i,k,v){current().transports[i][k]=['estimated','reserved','paid'].includes(k)?(+v||0):v;persist()}
+function setTransport(i,k,v){current().transports[i][k]=['estimated','reserved','paid','quantity'].includes(k)?(+v||0):v;persist()}
 function nightsBetween(a,b){if(!a||!b)return 0;let x=new Date(a+'T12:00:00'),y=new Date(b+'T12:00:00');return Math.max(0,Math.round((y-x)/86400000))}
 function hotelNightly(h){let n=nightsBetween(h.checkin,h.checkout);return n?((+h.total||0)/n):0}
 function addHotel(){
  let t=current(),total=+hotelTotal.value||0;
- t.hotels.push({id:uid(),city:hotelCity.value,name:hotelName.value.trim(),address:hotelAddress.value.trim(),checkin:hotelCheckin.value,checkout:hotelCheckout.value,room:hotelRoom.value.trim(),guests:+hotelGuests.value||1,reference:hotelRef.value.trim(),platform:hotelPlatform.value.trim(),currency:hotelCurrency.value,total,reserved:+hotelReserved.value||0,paid:+hotelPaid.value||0,status:hotelStatus.value,cancellation:hotelCancel.value.trim(),notes:''});
+ t.hotels.push({id:uid(),city:hotelCity.value,name:hotelName.value.trim(),address:hotelAddress.value.trim(),checkin:hotelCheckin.value,checkout:hotelCheckout.value,room:hotelRoom.value.trim(),guests:+hotelGuests.value||1,reference:hotelRef.value.trim(),platform:hotelPlatform.value.trim(),currency:hotelCurrency.value,total,reserved:+hotelReserved.value||0,paid:+hotelPaid.value||0,status:hotelStatus.value,cancellation:hotelCancel.value.trim(),notes:'',billing:'Por reserva/quarto',quantity:1});
  ['hotelName','hotelAddress','hotelCheckin','hotelCheckout','hotelRoom','hotelRef','hotelPlatform','hotelCancel'].forEach(id=>document.getElementById(id).value='');
  hotelGuests.value='1';hotelTotal.value='0';hotelReserved.value='0';hotelPaid.value='0';hotelStatus.value='A pesquisar';persist();renderLogistics()
 }
 function setHotel(i,k,v){
- let h=current().hotels[i];h[k]=['guests','total','reserved','paid'].includes(k)?(+v||0):v;persist();renderLogistics()
+ let h=current().hotels[i];h[k]=['guests','total','reserved','paid','quantity'].includes(k)?(+v||0):v;persist();renderLogistics()
 }
 function removeHotel(i){
  let h=current().hotels[i];if((h.status==='Reservado'||h.status==='Pago')&&!confirm('Este hotel está reservado/pago. Remover mesmo assim?'))return;
@@ -259,7 +266,7 @@ function generateDaily(){
    let d=t.destinations.find(x=>x.city===city),days=Math.max(1,+d.days||1),selected=selectedExperiences(city);
    for(let j=0;j<days;j++){
      let h=hotelForNight(city,date),acts=[];
-     selected.filter(p=>!scheduled.has(p.id)).slice(0,3).forEach((p,k)=>{acts.push({id:uid(),sourcePoiId:p.id,type:'Ponto de interesse',time:['09:30','14:00','17:00'][k]||'',name:p.displayName||p.name,location:p.localName||'',duration:'',currency:t.baseCurrency,cost:0,reservation:'',status:'Planejado',notes:''});scheduled.add(p.id)});
+     selected.filter(p=>!scheduled.has(p.id)).slice(0,3).forEach((p,k)=>{acts.push({id:uid(),sourcePoiId:p.id,type:'Ponto de interesse',time:['09:30','14:00','17:00'][k]||'',name:p.displayName||p.name,location:p.localName||'',duration:'',currency:t.baseCurrency,cost:0,reservation:'',status:'Planejado',notes:'',billing:'Por pessoa',quantity:1});scheduled.add(p.id)});
      t.daily.push({id:uid(),day:n++,date,city,hotelId:h?.id||'',activities:acts});
      if(date)date=addDays(date,1)
    }
@@ -267,13 +274,15 @@ function generateDaily(){
  t.needsReview=false;persist();renderDaily()
 }
 function activityCategory(type){if(type==='Restaurante/Café')return 'Alimentação';if(type==='Transporte local')return 'Transporte local';if(['Ponto de interesse','Tour','Bate-volta'].includes(type))return 'Experiências';return 'Outros'}
-function activityTotal(d){return (d.activities||[]).reduce((s,a)=>s+toBase(a.cost,a.currency),0)}
-function hotelCostForDay(d){let t=current(),h=t.hotels.find(x=>x.id===d.hotelId);return h?toBase(hotelNightly(h),h.currency):0}
+function itemMultiplier(billing,quantity){let t=current(),q=Math.max(1,+quantity||1);return billing==='Por pessoa'?Math.max(1,+t.travelers||1)*q:q}
+function itemTotal(value,currency,billing,quantity){return toBase((+value||0)*itemMultiplier(billing,quantity),currency)}
+function activityTotal(d){return (d.activities||[]).reduce((s,a)=>s+itemTotal(a.cost,a.currency,a.billing||'Por pessoa',a.quantity||1),0)}
+function hotelCostForDay(d){let t=current(),h=t.hotels.find(x=>x.id===d.hotelId);return h?toBase(hotelNightly(h)*(+h.quantity||1),h.currency):0}
 function addActivity(di,poiId=''){
  let t=current(),d=t.daily[di],p=selectedExperiences(d.city).find(x=>x.id===poiId);
- d.activities=d.activities||[];d.activities.push({id:uid(),sourcePoiId:p?.id||'',type:p?'Ponto de interesse':'Outro',time:'',name:p?(p.displayName||p.name):'',location:p?.localName||'',duration:'',currency:t.baseCurrency,cost:0,reservation:'',status:'Planejado',notes:''});persist();renderDaily()
+ d.activities=d.activities||[];d.activities.push({id:uid(),sourcePoiId:p?.id||'',type:p?'Ponto de interesse':'Outro',time:'',name:p?(p.displayName||p.name):'',location:p?.localName||'',duration:'',currency:t.baseCurrency,cost:0,reservation:'',status:'Planejado',notes:'',billing:'Por pessoa',quantity:1});persist();renderDaily()
 }
-function setActivity(di,ai,k,v){let a=current().daily[di].activities[ai];a[k]=k==='cost'?(+v||0):v;persist();renderDaily()}
+function setActivity(di,ai,k,v){let a=current().daily[di].activities[ai];a[k]=['cost','quantity'].includes(k)?(+v||0):v;persist();renderDaily()}
 function removeActivity(di,ai){current().daily[di].activities.splice(ai,1);persist();renderDaily()}
 function moveActivity(di,ai,dir){let a=current().daily[di].activities,j=ai+dir;if(j<0||j>=a.length)return;[a[ai],a[j]]=[a[j],a[ai]];persist();renderDaily()}
 function setDayHotel(di,id){current().daily[di].hotelId=id;persist();renderDaily()}
@@ -293,7 +302,7 @@ function renderDaily(){
    <div class="field"><label>Tipo</label><select onchange="setActivity(${di},${ai},'type',this.value)">${['Ponto de interesse','Restaurante/Café','Tour','Bate-volta','Transporte local','Compras','Tempo livre','Outro'].map(v=>`<option ${a.type===v?'selected':''}>${v}</option>`).join('')}</select></div>
    <div class="field wide"><label>Nome / atividade</label><input value="${a.name||''}" onchange="setActivity(${di},${ai},'name',this.value)"></div>
    <div class="field"><label>Duração</label><input value="${a.duration||''}" placeholder="2h" onchange="setActivity(${di},${ai},'duration',this.value)"></div>
-   <div class="field"><label>Custo</label><input type="number" step="10" value="${a.cost||0}" onchange="setActivity(${di},${ai},'cost',this.value)"></div>
+   <div class="field"><label>Custo unitário</label><input type="number" step="10" value="${a.cost||0}" onchange="setActivity(${di},${ai},'cost',this.value)"></div><div class="field"><label>Cobrança</label><select onchange="setActivity(${di},${ai},'billing',this.value)">${['Por pessoa','Total do grupo','Por veículo'].map(v=>`<option ${((a.billing||'Por pessoa')===v)?'selected':''}>${v}</option>`).join('')}</select></div><div class="field"><label>Quantidade</label><input type="number" min="1" value="${a.quantity||1}" onchange="setActivity(${di},${ai},'quantity',this.value)"></div>
    <div class="activity-actions"><button class="btn secondary" onclick="moveActivity(${di},${ai},-1)">↑</button> <button class="btn secondary" onclick="moveActivity(${di},${ai},1)">↓</button> <button class="btn danger" onclick="removeActivity(${di},${ai})">Excluir</button></div>
    <div class="field"><label>Moeda</label><select onchange="setActivity(${di},${ai},'currency',this.value)">${['BRL','USD','EUR'].map(c=>`<option ${a.currency===c?'selected':''}>${c}</option>`).join('')}</select></div>
    <div class="field wide"><label>Local / endereço</label><input value="${a.location||''}" onchange="setActivity(${di},${ai},'location',this.value)"></div>
@@ -306,16 +315,16 @@ function renderDaily(){
 
 function calcPlanned(){
  let t=current();if(!t)return 0;
- let transport=t.transports.reduce((s,x)=>s+toBase(x.estimated,x.currency),0);
- let hotels=t.hotels.reduce((s,h)=>s+toBase(h.total,h.currency),0);
+ let transport=t.transports.reduce((s,x)=>s+itemTotal(x.estimated,x.currency,x.billing||'Por pessoa',x.quantity||1),0);
+ let hotels=t.hotels.reduce((s,h)=>s+toBase((+h.total||0)*(+h.quantity||1),h.currency),0);
  let activities=t.daily.reduce((s,d)=>s+(d.activities||[]).reduce((q,a)=>q+toBase(a.cost,a.currency),0),0);
  return transport+hotels+activities
 }
 function budgetData(){
  let t=current(),cats={'Transportes':0,'Hospedagens':0,'Alimentação':0,'Transporte local':0,'Experiências':0,'Outros':0},dest={};
- t.transports.forEach(x=>cats['Transportes']+=toBase(x.estimated,x.currency));
- t.hotels.forEach(h=>{let v=toBase(h.total,h.currency);cats['Hospedagens']+=v;dest[h.city]=(dest[h.city]||0)+v});
- t.daily.forEach(d=>(d.activities||[]).forEach(a=>{let c=activityCategory(a.type),v=toBase(a.cost,a.currency);cats[c]=(cats[c]||0)+v;dest[d.city]=(dest[d.city]||0)+v}));
+ t.transports.forEach(x=>cats['Transportes']+=itemTotal(x.estimated,x.currency,x.billing||'Por pessoa',x.quantity||1));
+ t.hotels.forEach(h=>{let v=toBase((+h.total||0)*(+h.quantity||1),h.currency);cats['Hospedagens']+=v;dest[h.city]=(dest[h.city]||0)+v});
+ t.daily.forEach(d=>(d.activities||[]).forEach(a=>{let c=activityCategory(a.type),v=itemTotal(a.cost,a.currency,a.billing||'Por pessoa',a.quantity||1);cats[c]=(cats[c]||0)+v;dest[d.city]=(dest[d.city]||0)+v}));
  let reserved=t.transports.reduce((s,x)=>s+toBase(x.reserved,x.currency),0)+t.hotels.reduce((s,h)=>s+toBase(h.reserved,h.currency),0);
  let paid=t.transports.reduce((s,x)=>s+toBase(x.paid,x.currency),0)+t.hotels.reduce((s,h)=>s+toBase(h.paid,h.currency),0)+t.daily.reduce((s,d)=>s+(d.activities||[]).filter(a=>a.status==='Pago').reduce((q,a)=>q+toBase(a.cost,a.currency),0),0);
  return {cats,dest,reserved,paid}
