@@ -1,7 +1,12 @@
-# H0.6.5
+# Changelog
 
-- mapa real;
-- layout vertical de logística;
-- curadoria de experiências;
-- nomes legíveis e transliteração aproximada;
-- descrição curta em português.
+## H0.6.6
+- edição completa de hospedagens;
+- total da reserva + cálculo de noites/diária;
+- hotel selecionável por noite no roteiro;
+- experiências selecionadas integradas ao roteiro;
+- agenda diária operacional;
+- atividades manuais e custos por atividade;
+- orçamento sem duplicidade de hotel;
+- dashboard financeiro com gráficos;
+- nomenclatura da margem cambial melhorada.
