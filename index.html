@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TripERP H0.6.8 — Editable Trips & Final Lock</title>
+<title>TripERP H0.6.9 — Cost Audit, Recurring Costs & Export</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 :root{--bg:#f4f6fa;--card:#fff;--nav:#111827;--nav2:#1f2937;--text:#172033;--muted:#64748b;--line:#dbe2ea;--blue:#2563eb;--green:#15803d;--red:#b91c1c;--shadow:0 8px 24px rgba(15,23,42,.07)}
@@ -43,7 +43,7 @@ main{margin-left:252px;transition:.2s;min-height:100vh}.sidebar.collapsed~main{m
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
-<div class="brand"><span class="logo">✈️</span><span>TripERP H0.6.8</span></div>
+<div class="brand"><span class="logo">✈️</span><span>TripERP H0.6.9</span></div>
 <button class="collapse-btn" onclick="sidebar.classList.toggle('collapsed')">☰</button>
 <nav>
 <button class="active" onclick="go('dashboard',this)"><span class="navico">📊</span><span class="label">Dashboard</span></button>
@@ -53,7 +53,8 @@ main{margin-left:252px;transition:.2s;min-height:100vh}.sidebar.collapsed~main{m
 <button onclick="go('smartRoute',this)"><span class="navico">🤖</span><span class="label">4. Roteiro Inteligente</span></button>
 <button onclick="go('logistics',this)"><span class="navico">🗺️</span><span class="label">5. Mapa & Logística</span></button>
 <button onclick="go('daily',this)"><span class="navico">🗓️</span><span class="label">6. Roteiro Dia a Dia</span></button>
-<button onclick="go('budget',this)"><span class="navico">💰</span><span class="label">7. Orçamento</span></button>
+<button onclick="go('recurring',this)"><span class="navico">🔁</span><span class="label">7. Custos Recorrentes</span></button>
+<button onclick="go('budget',this)"><span class="navico">💰</span><span class="label">8. Orçamento</span></button>
 <button onclick="go('integrations',this)"><span class="navico">🔐</span><span class="label">Integrações</span></button>
 <button onclick="go('manual',this)"><span class="navico">📘</span><span class="label">Manual</span></button>
 </nav>
@@ -61,12 +62,12 @@ main{margin-left:252px;transition:.2s;min-height:100vh}.sidebar.collapsed~main{m
 
 <main>
 <header class="topbar">
-<div class="active-trip"><div><small>Viagem ativa</small><br><strong id="activeTripName">Nenhuma viagem</strong></div><span class="badge" id="activeTripStatus">H0.6.8</span></div>
+<div class="active-trip"><div><small>Viagem ativa</small><br><strong id="activeTripName">Nenhuma viagem</strong></div><span class="badge" id="activeTripStatus">H0.6.9</span></div>
 <select id="tripSwitcher" class="trip-select" onchange="switchTrip(this.value)"></select>
 </header>
 <div class="content">
 
-<section id="dashboard" class="page active"><div class="hero"><h1>TripERP H0.6.8</h1><p>Mapa geográfico real, logística vertical e curadoria de experiências com nomes legíveis para o viajante.</p></div><div id="dashboardBody"></div></section>
+<section id="dashboard" class="page active"><div class="hero"><h1>TripERP H0.6.9</h1><p>Mapa geográfico real, logística vertical e curadoria de experiências com nomes legíveis para o viajante.</p></div><div id="dashboardBody"></div></section>
 
 <section id="trips" class="page"><div class="hero"><h1>1. Viagens & Configuração</h1><p>Crie a viagem já com período, orçamento, moeda e taxas.</p></div>
 <div class="card"><div class="grid g3">
@@ -93,11 +94,13 @@ main{margin-left:252px;transition:.2s;min-height:100vh}.sidebar.collapsed~main{m
 
 <section id="daily" class="page"><div class="hero"><h1>6. Roteiro Dia a Dia</h1><p>Agenda operacional completa: hotel por noite, lugares, restaurantes, tours, bate-voltas, horários, reservas e custos.</p></div><div class="card" id="dailyBody"></div></section>
 
-<section id="budget" class="page"><div class="hero"><h1>7. Orçamento</h1><p>Painel financeiro com KPIs, gráficos por categoria e destino, status financeiro e detalhamento.</p></div><div class="card" id="budgetBody"></div></section>
+
+<section id="recurring" class="page"><div class="hero"><h1>7. Custos Recorrentes</h1><p>Provisões automáticas para despesas repetidas durante a viagem.</p></div><div class="card"><div class="grid g4"><div class="field"><label>Categoria</label><select id="recCategory"><option>Alimentação</option><option>Transporte local</option><option>Seguro</option><option>Internet/eSIM</option><option>Outros</option></select></div><div class="field"><label>Descrição</label><input id="recDescription" placeholder="Ex.: Alimentação média"></div><div class="field"><label>Valor unitário</label><input id="recValue" type="number" step="10" value="0"></div><div class="field"><label>Moeda</label><select id="recCurrency"><option>BRL</option><option>USD</option><option>EUR</option></select></div><div class="field"><label>Cobrança</label><select id="recBilling"><option>Por pessoa</option><option>Total do grupo</option></select></div><div class="field"><label>Frequência</label><select id="recFrequency"><option>Por dia</option><option>Por noite</option><option>Valor único</option></select></div><div class="field"><label>Início</label><input id="recStart" type="date"></div><div class="field"><label>Fim</label><input id="recEnd" type="date"></div><div class="field"><label>Tratamento</label><select id="recMode"><option>Provisão</option><option>Somar sempre</option></select></div></div><div class="actions"><button class="btn success" onclick="addRecurringCost()">Adicionar custo recorrente</button></div><div class="notice">Provisão evita duplicidade com gasto específico da mesma categoria no dia. Somar sempre acumula ambos.</div></div><div id="recurringList"></div></section>
+<section id="budget" class="page"><div class="hero"><h1>8. Orçamento</h1><p>Painel financeiro com KPIs, gráficos por categoria e destino, status financeiro e detalhamento.</p></div><div class="card"><div class="actions"><button class="btn success" onclick="exportTripHTML()">Exportar viagem em HTML</button></div></div><div class="card" id="budgetBody"></div><div class="card"><h3>Resumo da Logística</h3><div id="logisticsSummary"></div></div><div class="card"><h3>Detalhamento de Custos</h3><div class="actions"><button class="btn secondary" onclick="renderCostAudit('all')">Todos</button><button class="btn secondary" onclick="renderCostAudit('logistics')">Somente logística</button><button class="btn secondary" onclick="renderCostAudit('largest')">Maiores gastos</button></div><div id="budgetAudit"></div></div></section>
 
 <section id="integrations" class="page"><div class="hero"><h1>Integrações</h1><p>Geoapify para geocodificação, Places e tiles do mapa.</p></div><div class="card"><div class="notice">🔐 A chave fica apenas neste navegador.</div><div class="field"><label>Geoapify API Key</label><input id="apiKeyInput" type="password"></div><div class="actions"><button class="btn" onclick="saveApiKey()">Salvar</button><button class="btn secondary" onclick="testGeoapify()">Testar conexão</button><button class="btn danger" onclick="removeApiKey()">Remover</button></div><div id="geoDiag"></div></div></section>
 
-<section id="manual" class="page"><div class="hero"><h1>Manual H0.6.8</h1></div><div class="card"><ol>
+<section id="manual" class="page"><div class="hero"><h1>Manual H0.6.9</h1></div><div class="card"><ol>
 <li>Configure Geoapify.</li><li>Crie a viagem e cadastre destinos.</li><li>Busque experiências curadas e marque as que deseja incluir.</li><li>Defina dias e gere/reordene o roteiro.</li><li>Cadastre e revise transportes e vários hotéis por cidade.</li><li>Informe o valor total de cada reserva; confira noites e diária calculada.</li><li>Gere o Roteiro Dia a Dia.</li><li>Escolha o hotel de cada noite quando houver mais de uma opção.</li><li>Inclua experiências selecionadas ou atividades manuais: restaurantes, tours, bate-voltas e transporte local.</li><li>Revise os gráficos e detalhamento do Orçamento.</li></ol></div></section>
 
 </div>
@@ -121,7 +124,7 @@ function ensureTrip(){if(!current()){navTo('trips');return false}return true}
 function switchTrip(id){if(!id)return;activeId=id;persist();renderPage(document.querySelector('.page.active')?.id||'dashboard')}
 
 function renderShell(){
- let t=current();activeTripName.textContent=t?t.name:'Nenhuma viagem';activeTripStatus.textContent=t?(t.needsReview?'Revisão necessária':t.status):'H0.6.8';
+ let t=current();activeTripName.textContent=t?t.name:'Nenhuma viagem';activeTripStatus.textContent=t?(t.needsReview?'Revisão necessária':t.status):'H0.6.9';
  tripSwitcher.innerHTML=trips.length?trips.map(x=>`<option value="${x.id}" ${x.id===activeId?'selected':''}>${x.name}</option>`).join(''):'<option value="">Nenhuma viagem</option>';
  tripsTable.innerHTML=trips.length?trips.map(x=>`<tr><td><b>${x.name}</b></td><td>${x.origin||'—'}</td><td>${safeDate(x.start)||'—'} → ${safeDate(x.end)||'—'}</td><td><span class="pill ${x.needsReview?'review':x.status==='Roteiro aprovado'?'approved':''}">${x.needsReview?'Revisão necessária':x.status}</span></td><td><button class="btn" onclick="openTrip('${x.id}')">Abrir</button> <button class="btn secondary" onclick="editTrip('${x.id}')">Editar</button> <button class="btn secondary" onclick="duplicateTrip('${x.id}')">Duplicar</button> <button class="btn danger" onclick="deleteTrip('${x.id}')">Excluir</button></td></tr>`).join(''):'<tr><td colspan="5">Nenhuma viagem.</td></tr>';
  renderDashboard()
@@ -387,6 +390,18 @@ function budgetData(){
  return {cats,dest,reserved,paid}
 }
 let budgetCharts=[];
+
+function daysInRangeInclusive(a,b){if(!a||!b)return 0;let x=new Date(a+'T12:00:00'),y=new Date(b+'T12:00:00');if(y<x)return 0;return Math.floor((y-x)/86400000)+1}
+function recurringOccurrences(r,t){let a=r.start||t.start,b=r.end||t.end;if(r.frequency==='Valor único')return 1;let d=daysInRangeInclusive(a,b);return r.frequency==='Por noite'?Math.max(0,d-1):d}
+function recurringBaseTotal(r,t){let mult=(r.billing==='Por pessoa')?Math.max(1,+t.travelers||1):1;return toBase((+r.value||0)*mult*recurringOccurrences(r,t),r.currency||t.baseCurrency)}
+function addRecurringCost(){let t=current();let r={id:'R'+Date.now(),category:recCategory.value,description:recDescription.value.trim()||recCategory.value,value:+recValue.value||0,currency:recCurrency.value,billing:recBilling.value,frequency:recFrequency.value,start:recStart.value||t.start,end:recEnd.value||t.end,mode:recMode.value};if(r.end<r.start)return alert('Período inválido');t.recurringCosts.push(r);persist();renderRecurring()}
+function deleteRecurringCost(id){let t=current();t.recurringCosts=t.recurringCosts.filter(x=>x.id!==id);persist();renderRecurring()}
+function renderRecurring(){let t=current();if(!t)return;if(!recStart.value)recStart.value=t.start||'';if(!recEnd.value)recEnd.value=t.end||'';recurringList.innerHTML=(t.recurringCosts||[]).length?`<div class="card"><div class="tablewrap"><table><thead><tr><th>Categoria</th><th>Descrição</th><th>Valor</th><th>Cobrança</th><th>Frequência</th><th>Período</th><th>Tratamento</th><th>Total</th><th></th></tr></thead><tbody>${t.recurringCosts.map(r=>`<tr><td>${r.category}</td><td>${r.description}</td><td>${money(r.value,r.currency)}</td><td>${r.billing}</td><td>${r.frequency}</td><td>${safeDate(r.start)} → ${safeDate(r.end)}</td><td>${r.mode}</td><td>${money(recurringBaseTotal(r,t),t.baseCurrency)}</td><td><button class="btn danger" onclick="deleteRecurringCost('${r.id}')">Excluir</button></td></tr>`).join('')}</tbody></table></div></div>`:'<div class="card"><div class="muted">Nenhum custo recorrente cadastrado.</div></div>'}
+function costAuditRows(){let t=current(),rows=[];(t.transports||[]).forEach(x=>rows.push({date:x.date||'',scope:`${x.from||''} → ${x.to||''}`,category:'Logística',item:x.type||'Transporte',calc:`${money(x.estimated||0,x.currency)} × ${x.billing==='Por pessoa'?(t.travelers||1)+' viajante(s)':(x.quantity||1)+' unidade(s)'}`,total:itemTotal(x.estimated,x.currency,x.billing||'Por pessoa',x.quantity||1)}));(t.hotels||[]).forEach(h=>rows.push({date:h.checkin||'',scope:h.city||'',category:'Hospedagem',item:h.hotel||'Hospedagem',calc:`${money(h.total||0,h.currency)} × ${h.quantity||1} quarto(s)/reserva(s)`,total:toBase((+h.total||0)*(+h.quantity||1),h.currency)}));(t.daily||[]).forEach(d=>(d.activities||[]).forEach(a=>rows.push({date:d.date||'',scope:d.city||'',category:activityCategory(a.type),item:a.name||a.type,calc:`${money(a.cost||0,a.currency)} × ${a.billing==='Por pessoa'?(t.travelers||1)+' viajante(s)':(a.quantity||1)+' unidade(s)'}`,total:itemTotal(a.cost,a.currency,a.billing||'Por pessoa',a.quantity||1)})));(t.recurringCosts||[]).forEach(r=>rows.push({date:r.start||'',scope:'Viagem',category:r.category,item:r.description,calc:`${money(r.value,r.currency)} × ${recurringOccurrences(r,t)} ocorrência(s)${r.billing==='Por pessoa'?` × ${t.travelers||1} viajante(s)`:''}`,total:recurringBaseTotal(r,t)}));return rows.sort((a,b)=>a.date.localeCompare(b.date)||b.total-a.total)}
+function logisticsSummaryData(){let t=current(),o={};(t.transports||[]).forEach(x=>{let k=x.type||'A definir';o[k]=(o[k]||0)+itemTotal(x.estimated,x.currency,x.billing||'Por pessoa',x.quantity||1)});return o}
+function renderCostAudit(mode='all'){let t=current(),rows=costAuditRows();if(mode==='logistics')rows=rows.filter(r=>r.category==='Logística'||r.category==='Transporte local');if(mode==='largest')rows=rows.sort((a,b)=>b.total-a.total).slice(0,20);let log=logisticsSummaryData();let l=document.getElementById('logisticsSummary');if(l)l.innerHTML=`<div class="tablewrap"><table><tbody>${Object.entries(log).map(([k,v])=>`<tr><td>${k}</td><td>${money(v,t.baseCurrency)}</td></tr>`).join('')}</tbody></table></div>`;let b=document.getElementById('budgetAudit');if(b)b.innerHTML=`<div class="tablewrap"><table><thead><tr><th>Data</th><th>Trecho/Cidade</th><th>Categoria</th><th>Item</th><th>Cálculo</th><th>Total</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${safeDate(r.date)}</td><td>${r.scope}</td><td>${r.category}</td><td>${r.item}</td><td>${r.calc}</td><td>${money(r.total,t.baseCurrency)}</td></tr>`).join('')}</tbody></table></div>`}
+function exportTripHTML(){let t=current(),rows=costAuditRows(),log=logisticsSummaryData(),total=rows.reduce((s,r)=>s+r.total,0);let daily=(t.daily||[]).map(d=>`<h3>${safeDate(d.date)} — ${d.city||''}</h3><ul>${(d.activities||[]).map(a=>`<li>${a.time||''} ${a.name||a.type} — ${money(itemTotal(a.cost,a.currency,a.billing||'Por pessoa',a.quantity||1),t.baseCurrency)}</li>`).join('')}</ul>`).join('');let html=`<!doctype html><meta charset="utf-8"><title>${t.name}</title><style>body{font-family:Arial;max-width:1100px;margin:40px auto;padding:0 20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:8px}th{background:#eee}</style><button onclick="print()">Imprimir / Salvar em PDF</button><h1>${t.name}</h1><p>${safeDate(t.start)} → ${safeDate(t.end)} • ${t.travelers||1} viajante(s)</p><h2>Roteiro</h2><p>${[t.origin,...(t.route||[]),t.returnCity].join(' → ')}</p><h2>Resumo da logística</h2><table>${Object.entries(log).map(([k,v])=>`<tr><td>${k}</td><td>${money(v,t.baseCurrency)}</td></tr>`).join('')}</table><h2>Detalhamento dos custos</h2><table><tr><th>Data</th><th>Trecho/Cidade</th><th>Categoria</th><th>Item</th><th>Cálculo</th><th>Total</th></tr>${rows.map(r=>`<tr><td>${safeDate(r.date)}</td><td>${r.scope}</td><td>${r.category}</td><td>${r.item}</td><td>${r.calc}</td><td>${money(r.total,t.baseCurrency)}</td></tr>`).join('')}</table><h2>Roteiro dia a dia</h2>${daily}`;let blob=new Blob([html],{type:'text/html'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(t.name||'viagem').replace(/[^\w\-]+/g,'_')+'_TripERP.html';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+
 function renderBudget(){
  if(!ensureTrip())return;let t=current(),planned=calcPlanned(),b=budgetData(),perTraveler=t.travelers?planned/t.travelers:planned;
  budgetBody.innerHTML=`<div class="grid g4">
@@ -415,7 +430,7 @@ function drawBudgetCharts(b,planned){
 function saveApiKey(){localStorage.setItem(GEO,apiKeyInput.value.trim());alert('Chave salva.')}function removeApiKey(){localStorage.removeItem(GEO);apiKeyInput.value='';geoDiag.innerHTML=''}
 async function testGeoapify(){geoDiag.innerHTML='<div class="notice">Testando...</div>';try{let a=await fetch(`https://api.geoapify.com/v1/geocode/search?text=Lisbon&limit=1&apiKey=${encodeURIComponent(apiKey())}`);if(!a.ok)throw new Error('Geocoding '+a.status);let b=await fetch(`https://api.geoapify.com/v2/places?categories=tourism.sights&filter=circle:-9.142685,38.736946,5000&limit=1&apiKey=${encodeURIComponent(apiKey())}`);if(!b.ok)throw new Error('Places '+b.status);geoDiag.innerHTML='<div class="notice ok">✅ Geocoding e Places funcionando. O mapa usará a mesma chave.</div>'}catch(e){geoDiag.innerHTML=`<div class="notice danger">❌ ${e.message}</div>`}}
 
-function renderPage(id){if(id==='dashboard')renderDashboard();if(id==='destinations')renderDestinations();if(id==='experiences')renderExperiences();if(id==='smartRoute')renderSmartRoute();if(id==='logistics')renderLogistics();if(id==='daily')renderDaily();if(id==='budget')renderBudget();if(id==='integrations')apiKeyInput.value=apiKey()}
+function renderPage(id){if(id==='dashboard')renderDashboard();if(id==='destinations')renderDestinations();if(id==='experiences')renderExperiences();if(id==='smartRoute')renderSmartRoute();if(id==='logistics')renderLogistics();if(id==='daily')renderDaily();if(id==='recurring')renderRecurring();if(id==='budget'){renderBudget();setTimeout(()=>renderCostAudit(),0);}if(id==='integrations')apiKeyInput.value=apiKey()}
 renderShell();
 </script>
 </body>
